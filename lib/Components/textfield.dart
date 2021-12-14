@@ -5,13 +5,14 @@ class EntryField extends StatelessWidget {
   final String? initialValue;
   final bool? enabled;
   final String? Function(String?)? validator;
+  final TextEditingController? textFieldController;
   TextEditingController entryFieldController = TextEditingController();
-  EntryField(this.title, {this.initialValue, this.validator, this.enabled});
+  EntryField(this.title, {this.initialValue, this.validator, this.enabled, this.textFieldController});
   @override
   Widget build(BuildContext context) {
-    entryFieldController.text = initialValue ?? '';
+    textFieldController == null ? entryFieldController.text = initialValue ?? '' : textFieldController!.text = textFieldController!.text;
     return TextFormField(
-      controller: entryFieldController,
+      controller: textFieldController ?? entryFieldController,
       validator: validator,
       enabled: enabled, 
       style: Theme.of(context)
