@@ -1,22 +1,16 @@
 import 'dart:io';
 
 import 'package:animation_wrappers/animation_wrappers.dart';
-import 'package:diademe/Dao/SalerDao.dart';
-import 'package:diademe/Dao/SalerReviewDao.dart';
+import 'package:diademe/Bloc/Database/database_bloc.dart';
+import 'package:diademe/Bloc/Database/database_state.dart';
 import 'package:diademe/Models/Saler.dart';
-import 'package:diademe/database/database.dart';
 import 'package:flutter/material.dart';
-import 'package:diademe/Components/colorButton.dart';
 import 'package:diademe/Components/textfield.dart';
 import 'package:diademe/Locale/locales.dart';
-import 'package:diademe/pages/home.dart';
-import 'package:flutter/services.dart';
-
-import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AddSaler extends StatefulWidget {
   @override
@@ -24,13 +18,10 @@ class AddSaler extends StatefulWidget {
 }
 
 class _AddSalerState extends State<AddSaler> {
-  late AppDatabase database;
-  late SalerDao salerDao;
+  late LoadedDatabaseState _databaseState;
 
   TextEditingController nameFieldController = TextEditingController();
   TextEditingController phoneFieldController = TextEditingController();
-  // TextEditingController birthdayFieldController = TextEditingController();
-  // TextEditingController startdayFieldController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   String? _birthday;
@@ -38,27 +29,11 @@ class _AddSalerState extends State<AddSaler> {
   bool _isActive = true;
 
   File? croppedImage;
-  late final String path;
 
   @override
   void initState() {
+    _databaseState = BlocProvider.of<DatabaseBloc>(context).state as LoadedDatabaseState;
     super.initState();
-
-    $FloorAppDatabase
-        .databaseBuilder('app_database.db')
-        .build()
-        .then((value) async {
-      this.database = value;
-      Directory appDocumentsDirectory =
-          await getApplicationDocumentsDirectory();
-      path = appDocumentsDirectory.path + '/images';
-      salerDao = database.salerDao;
-
-      if (!await Directory(path).exists()) {
-        Directory _new = await Directory(path).create(recursive: true);
-      }
-    });
-
     // SystemChrome.setPreferredOrientations([
     //     DeviceOrientation.portraitUp,
     //     DeviceOrientation.portraitDown,
@@ -389,15 +364,15 @@ class _AddSalerState extends State<AddSaler> {
                                     .toString() +
                                 croppedImage!.path.split('/').last;
                             File newImage = croppedImage!
-                                .copySync(path + "/" + newImageName);
-                            await salerDao.insertSaler(Saler(
+                                .copySync(_databaseState.path + "/" + newImageName);
+                            await _databaseState.salerDao.insertSaler(Saler(
                                 name: nameFieldController.text,
                                 phone: phoneFieldController.text,
                                 birthday: _birthday ?? '',
                                 startday: _startDay ?? '',
                                 actif: _isActive,
                                 image: newImage.path.split('/').last));
-                                var a = await salerDao.findAllSalers();
+                                var a = await _databaseState.salerDao.findAllSalers();
                             setState(() {
                               croppedImage = null;
                               nameFieldController.text = '';

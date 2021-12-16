@@ -18,6 +18,7 @@ class SalerReview {
   final int salerId;
   final int mark;
   final String comment;
+  final int date;
 
-  SalerReview(this.id, this.salerId, this.mark, this.comment);
+  SalerReview(this.id, this.salerId, this.mark, this.comment, this.date);
 }

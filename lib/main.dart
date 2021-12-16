@@ -1,3 +1,7 @@
+import 'package:diademe/Bloc/Database/database_bloc.dart';
+import 'package:diademe/Bloc/Database/database_event.dart';
+import 'package:diademe/Bloc/Database/database_state.dart';
+import 'package:diademe/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,29 +32,36 @@ class DiademeFeedback extends StatelessWidget {
         BlocProvider<LanguageCubit>(
           create: (context) => LanguageCubit(),
         ),
+        BlocProvider<DatabaseBloc>(
+          create: (context) => DatabaseBloc(),
+        ),
       ],
       child: BlocBuilder<LanguageCubit, Locale>(
         builder: (_, locale) {
-          return MaterialApp(
-            localizationsDelegates: [
-              const AppLocalizationsDelegate(),
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ],
-            supportedLocales: [
-              const Locale('en'),
-              // const Locale('pt'),
-              const Locale('fr'),
-              // const Locale('id'),
-              const Locale('ar'),
-              // const Locale('es'),
-              // const Locale('it'),
-              // const Locale('tr'),
-              // const Locale('sw'),
-            ],
-            locale: locale,
-            theme: appTheme,
-            home: Languages(),
+          return BlocBuilder<DatabaseBloc, DatabaseState>(
+            builder: (context, state) {
+              return MaterialApp(
+                localizationsDelegates: [
+                  const AppLocalizationsDelegate(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  const Locale('en'),
+                  // const Locale('pt'),
+                  const Locale('fr'),
+                  // const Locale('id'),
+                  const Locale('ar'),
+                  // const Locale('es'),
+                  // const Locale('it'),
+                  // const Locale('tr'),
+                  // const Locale('sw'),
+                ],
+                locale: locale,
+                theme: appTheme,
+                home: HomePage(),
+              );
+            },
           );
         },
       ),

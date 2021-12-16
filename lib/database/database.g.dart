@@ -85,7 +85,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Saler` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `phone` TEXT NOT NULL, `birthday` TEXT NOT NULL, `startday` TEXT NOT NULL, `actif` INTEGER NOT NULL, `image` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `saler_review` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `saler_id` INTEGER NOT NULL, `mark` INTEGER NOT NULL, `comment` TEXT NOT NULL, FOREIGN KEY (`saler_id`) REFERENCES `Saler` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `saler_review` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `saler_id` INTEGER NOT NULL, `mark` INTEGER NOT NULL, `comment` TEXT NOT NULL, `date` INTEGER NOT NULL, FOREIGN KEY (`saler_id`) REFERENCES `Saler` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -225,7 +225,8 @@ class _$SalerReviewDao extends SalerReviewDao {
                   'id': item.id,
                   'saler_id': item.salerId,
                   'mark': item.mark,
-                  'comment': item.comment
+                  'comment': item.comment,
+                  'date': item.date
                 }),
         _salerReviewUpdateAdapter = UpdateAdapter(
             database,
@@ -235,7 +236,8 @@ class _$SalerReviewDao extends SalerReviewDao {
                   'id': item.id,
                   'saler_id': item.salerId,
                   'mark': item.mark,
-                  'comment': item.comment
+                  'comment': item.comment,
+                  'date': item.date
                 }),
         _salerReviewDeletionAdapter = DeletionAdapter(
             database,
@@ -245,7 +247,8 @@ class _$SalerReviewDao extends SalerReviewDao {
                   'id': item.id,
                   'saler_id': item.salerId,
                   'mark': item.mark,
-                  'comment': item.comment
+                  'comment': item.comment,
+                  'date': item.date
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -267,7 +270,8 @@ class _$SalerReviewDao extends SalerReviewDao {
             row['id'] as int,
             row['saler_id'] as int,
             row['mark'] as int,
-            row['comment'] as String));
+            row['comment'] as String,
+            row['date'] as int));
   }
 
   @override
@@ -277,7 +281,8 @@ class _$SalerReviewDao extends SalerReviewDao {
             row['id'] as int,
             row['saler_id'] as int,
             row['mark'] as int,
-            row['comment'] as String),
+            row['comment'] as String,
+            row['date'] as int),
         arguments: [id]);
   }
 

@@ -52,7 +52,10 @@ class _SettingsState extends State<Settings> {
               size: 30,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage()));
             }),
         title: Text('Parametres'),
         centerTitle: true,
