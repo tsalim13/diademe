@@ -4,10 +4,12 @@ class EntryField extends StatelessWidget {
   final String title;
   final String? initialValue;
   final bool? enabled;
+  final int? maxLines;
+  final double? fontSize;
   final String? Function(String?)? validator;
   final TextEditingController? textFieldController;
   TextEditingController entryFieldController = TextEditingController();
-  EntryField(this.title, {this.initialValue, this.validator, this.enabled, this.textFieldController});
+  EntryField(this.title, {this.initialValue, this.validator, this.enabled, this.maxLines, this.fontSize, this.textFieldController});
   @override
   Widget build(BuildContext context) {
     textFieldController == null ? entryFieldController.text = initialValue ?? '' : textFieldController!.text = textFieldController!.text;
@@ -15,10 +17,11 @@ class EntryField extends StatelessWidget {
       controller: textFieldController ?? entryFieldController,
       validator: validator,
       enabled: enabled, 
+      maxLines: maxLines,
       style: Theme.of(context)
               .textTheme
               .bodyText1!
-              .copyWith(color: Colors.black, fontSize: 17),
+              .copyWith(color: Colors.black, fontSize: fontSize ?? 17),
       decoration: InputDecoration(
           prefixStyle: Theme.of(context)
               .textTheme
@@ -37,7 +40,7 @@ class EntryField extends StatelessWidget {
           hintStyle: Theme.of(context)
               .textTheme
               .bodyText1!
-              .copyWith(color: Colors.grey, fontSize: 17)),
+              .copyWith(color: Colors.grey, fontSize: fontSize ?? 17)),
     );
   }
 }

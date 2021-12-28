@@ -60,24 +60,27 @@ class LoginUi extends StatelessWidget {
                 ),
                 Container(
                   //padding: EdgeInsets.only(left: 35),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      EntryField("+1 984 596 4521"),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            locale.wellSendCode!,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      )
-                    ],
+                  child: Container(
+                    width: 400,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        EntryField("+1 984 596 4521"),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              locale.wellSendCode!,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Spacer(),

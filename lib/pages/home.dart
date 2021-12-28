@@ -5,6 +5,7 @@ import 'package:diademe/Bloc/Database/database_bloc.dart';
 import 'package:diademe/Bloc/Database/database_event.dart';
 import 'package:diademe/Bloc/Database/database_state.dart';
 import 'package:diademe/Models/Saler.dart';
+import 'package:diademe/pages/review.dart';
 import 'package:flutter/material.dart';
 import 'package:diademe/Locale/locales.dart';
 import 'package:diademe/pages/login.dart';
@@ -21,8 +22,9 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   late final int fittingCount;
 
-  static const CROSS_AXIS_COUNT = 5;
-  late double h;
+  static const CROSS_AXIS_COUNT = 4;
+
+  late double maxWidth;
 
   @override
   void initState() {
@@ -33,7 +35,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var locale = AppLocalizations.of(context)!;
-    h = MediaQuery.of(context).size.height;
+    Size _size = MediaQuery.of(context).size;
+    double wdth = (_size.width - 60) / _salers.length;
+    maxWidth = wdth < (_size.height - 250) ? wdth : (_size.height - 250);
     return Scaffold(
       body: BlocConsumer<DatabaseBloc, DatabaseState>(
         listener: (context, state) async {
@@ -50,11 +54,11 @@ class _HomePageState extends State<HomePage> {
               ? Center(child: CircularProgressIndicator())
               : FadedSlideAnimation(
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 25),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 40),
+                          padding: const EdgeInsets.only(top: 40, bottom: 25),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -94,126 +98,185 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        Container(
-                          height: h-180,
-                          alignment: Alignment.center,
-                          child: LayoutBuilder(builder: (context, constraints) {
-                            return StaggeredGridView.countBuilder(
-                                crossAxisCount: CROSS_AXIS_COUNT,
-                                shrinkWrap: true,
-                                mainAxisSpacing: 10,
-                                crossAxisSpacing: 10,
-                                itemCount: _salers.length == fittingCount
-                                    ? fittingCount
-                                    : fittingCount + 1,
-                                itemBuilder: (context, index) {
-                                  if (index < fittingCount) {
-                                    return AspectRatio(
-                                      aspectRatio: 1,
-                                      child: Container(
-                                        child: Card(
-                                          elevation: 5.0,
-                                          shape: RoundedRectangleBorder(
+                        // Container(
+                        //   height: h-180,
+                        //   alignment: Alignment.center,
+                        //   child: LayoutBuilder(builder: (context, constraints) {
+                        //     return StaggeredGridView.countBuilder(
+                        //         crossAxisCount: CROSS_AXIS_COUNT,
+                        //         shrinkWrap: true,
+                        //         mainAxisSpacing: 15,
+                        //         crossAxisSpacing: 15,
+                        //         itemCount: _salers.length == fittingCount
+                        //             ? fittingCount
+                        //             : fittingCount + 1,
+                        //         itemBuilder: (context, index) {
+                        //           if (index < fittingCount) {
+                        //             return AspectRatio(
+                        //               aspectRatio: 1,
+                        //               child: Container(
+                        //                 child: Card(
+                        //                   elevation: 5.0,
+                        //                   shape: RoundedRectangleBorder(
+                        //                     borderRadius:
+                        //                         BorderRadius.circular(300),
+                        //                     side: BorderSide(width: 2, color: Theme.of(context).primaryColor)
+                        //                   ),
+                        //                   child: ClipRRect(
+                        //                     borderRadius:
+                        //                         BorderRadius.circular(300),
+                        //                     child: Center(
+                        //                       child: Image.file(
+                        //                         File(
+                        //                             (state as LoadedDatabaseState)
+                        //                                     .path +
+                        //                                 "/" +
+                        //                                 _salers[index].image),
+                        //                         fit: BoxFit.fill,
+                        //                       ),
+                        //                     ),
+                        //                   ),
+                        //                 ),
+                        //                 decoration: BoxDecoration(
+                        //                   boxShadow: [
+                        //                     BoxShadow(
+                        //                       color: Colors.white54,
+                        //                       blurRadius: 5.0,
+                        //                       offset: Offset(0, 10),
+                        //                       spreadRadius: 0.5,
+                        //                     ),
+                        //                   ],
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(12),
+                        //                 ),
+                        //               ),
+                        //             );
+                        //           } else {
+                        //             return Row(
+                        //                 mainAxisAlignment:
+                        //                     MainAxisAlignment.center,
+                        //                 children: _salers
+                        //                     .sublist(
+                        //                         fittingCount, _salers.length)
+                        //                     .map((m) {
+                        //                   return Container(
+                        //                     width: constraints.maxWidth /
+                        //                             CROSS_AXIS_COUNT -
+                        //                         15,
+                        //                     child: AspectRatio(
+                        //                       aspectRatio: 1,
+                        //                       child: Container(
+                        //                         child: Card(
+                        //                           elevation: 5.0,
+                        //                           shape: RoundedRectangleBorder(
+                        //                             borderRadius:
+                        //                                 BorderRadius.circular(
+                        //                                     300),
+                        //                             side: BorderSide(width: 3, color: Theme.of(context).primaryColor)
+                        //                           ),
+                        //                           child: ClipRRect(
+                        //                             borderRadius:
+                        //                                 BorderRadius.circular(
+                        //                                     300),
+                        //                             child: Center(
+                        //                               child: Image.file(
+                        //                                 File(
+                        //                                     (state as LoadedDatabaseState)
+                        //                                             .path +
+                        //                                         "/" +
+                        //                                         _salers[index]
+                        //                                             .image),
+                        //                                 fit: BoxFit.fill,
+                        //                               ),
+                        //                             ),
+                        //                           ),
+                        //                         ),
+                        //                         decoration: BoxDecoration(
+                        //                           boxShadow: [
+                        //                             BoxShadow(
+                        //                               color: Colors.white54,
+                        //                               blurRadius: 5.0,
+                        //                               offset: Offset(0, 15),
+                        //                               spreadRadius: 0.5,
+                        //                             ),
+                        //                           ],
+                        //                           borderRadius:
+                        //                               BorderRadius.circular(12),
+                        //                         ),
+                        //                       ),
+                        //                     ),
+                        //                   );
+                        //                 }).toList());
+                        //           }
+                        //         },
+                        //         staggeredTileBuilder: (int index) {
+                        //           if (index < fittingCount) {
+                        //             return StaggeredTile.count(1, 1);
+                        //           } else {
+                        //             return StaggeredTile.count(
+                        //                 CROSS_AXIS_COUNT, 1);
+                        //           }
+                        //         });
+                        //   }),
+                        // ),
+                        Spacer(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            for (int i = 0; i < _salers.length; i++)
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ReviewPage(saler: _salers[i])));
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  width: maxWidth,
+                                  child: AspectRatio(
+                                    aspectRatio: 1,
+                                    child: Container(
+                                      child: Card(
+                                        elevation: 5.0,
+                                        shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(300),
-                                            side: BorderSide(width: 2, color: Theme.of(context).primaryColor)
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(300),
-                                            child: Center(
-                                              child: Image.file(
-                                                File(
-                                                    (state as LoadedDatabaseState)
-                                                            .path +
-                                                        "/" +
-                                                        _salers[index].image),
-                                                fit: BoxFit.fill,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.white54,
-                                              blurRadius: 5.0,
-                                              offset: Offset(0, 10),
-                                              spreadRadius: 0.5,
-                                            ),
-                                          ],
+                                            side: BorderSide(
+                                                width: 3,
+                                                color: Theme.of(context)
+                                                    .primaryColor)),
+                                        child: ClipRRect(
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                              BorderRadius.circular(300),
+                                          child: Image.file(
+                                            File((state as LoadedDatabaseState)
+                                                    .path +
+                                                "/" +
+                                                _salers[i].image),
+                                            fit: BoxFit.fill,
+                                            alignment: Alignment.center,
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  } else {
-                                    return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: _salers
-                                            .sublist(
-                                                fittingCount, _salers.length)
-                                            .map((m) {
-                                          return Container(
-                                            width: constraints.maxWidth /
-                                                    CROSS_AXIS_COUNT -
-                                                10,
-                                            child: AspectRatio(
-                                              aspectRatio: 1,
-                                              child: Container(
-                                                child: Card(
-                                                  elevation: 5.0,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            300),
-                                                    side: BorderSide(width: 3, color: Theme.of(context).primaryColor)
-                                                  ),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            300),
-                                                    child: Center(
-                                                      child: Image.file(
-                                                        File(
-                                                            (state as LoadedDatabaseState)
-                                                                    .path +
-                                                                "/" +
-                                                                _salers[index]
-                                                                    .image),
-                                                        fit: BoxFit.fill,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.white54,
-                                                      blurRadius: 5.0,
-                                                      offset: Offset(0, 15),
-                                                      spreadRadius: 0.5,
-                                                    ),
-                                                  ],
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }).toList());
-                                  }
-                                },
-                                staggeredTileBuilder: (int index) {
-                                  if (index < fittingCount) {
-                                    return StaggeredTile.count(1, 1);
-                                  } else {
-                                    return StaggeredTile.count(
-                                        CROSS_AXIS_COUNT, 1);
-                                  }
-                                });
-                          }),
+                                      decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.white54,
+                                            blurRadius: 5.0,
+                                            offset: Offset(0, 15),
+                                            spreadRadius: 0.5,
+                                          ),
+                                        ],
+                                        borderRadius:
+                                            BorderRadius.circular(300),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         Spacer(),
                         FadedScaleAnimation(

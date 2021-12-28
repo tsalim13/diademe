@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 
 class ColorButton extends StatelessWidget {
   final String? title;
-  ColorButton(this.title);
+  final double? height;
+  final double? width;
+  final double? fontSize;
+  ColorButton(this.title, {this.height, this.width, this.fontSize});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40,
-      width: 150,
+      height: height ?? 40,
+      width: width ?? 150,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.circular(25),
@@ -19,7 +22,7 @@ class ColorButton extends StatelessWidget {
         style: Theme.of(context)
             .textTheme
             .bodyText1!
-            .copyWith(fontSize: 14, color: Colors.white, letterSpacing: 1.5),
+            .copyWith(fontSize: fontSize ?? 14, color: Colors.white, letterSpacing: 1.5),
       )),
     );
   }

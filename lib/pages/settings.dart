@@ -1,5 +1,6 @@
 import 'package:animation_wrappers/animation_wrappers.dart';
 import 'package:diademe/pages/add_saler.dart';
+import 'package:diademe/pages/list_salers.dart';
 import 'package:flutter/material.dart';
 import 'package:diademe/Components/colorButton.dart';
 import 'package:diademe/Components/textfield.dart';
@@ -85,7 +86,10 @@ class _SettingsState extends State<Settings> {
               ElevatedButton(
                 style: style,
                 onPressed: () {
-
+                  Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListSalersPage()));
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
