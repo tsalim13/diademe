@@ -36,13 +36,14 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    double width = (MediaQuery.of(context).size.width - 280) / 3;
     final ButtonStyle style =
       ElevatedButton.styleFrom(
         textStyle: const TextStyle(fontSize: 25),
         elevation: 15,
         primary: Theme.of(context).primaryColor.withOpacity(0.7),
         onPrimary: Colors.black,
-        fixedSize: Size(250, 250)
+        fixedSize: Size(width, width)
       );
     var locale = AppLocalizations.of(context)!;
     return Scaffold(
@@ -62,55 +63,78 @@ class _SettingsState extends State<Settings> {
         centerTitle: true,
       ),
       body: FadedSlideAnimation(
-        Padding(
-          padding: const EdgeInsets.only(left: 50, right: 50, top: 150),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                style: style,
-                onPressed: () {
-                  Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddSaler()));
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.person_add, size: 70),
-                    Text('Ajouter un vendeur')
-                ]),
-              ),
-              ElevatedButton(
-                style: style,
-                onPressed: () {
-                  Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ListSalersPage()));
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.person_search, size: 70),
-                    Text('Liste des vendeurs')
-                ]),
-              ),
-              ElevatedButton(
-                style: style,
-               onPressed: () {
-                  
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.bar_chart, size: 70),
-                    Text('Statistiques')
-                ]),
-              ),
-            ],
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 40, right: 40),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ElevatedButton(
+                    style: style,
+                    onPressed: () {
+                      Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddSaler()));
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.person_add, size: 70),
+                        Text('Ajouter un vendeur',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        ))
+                    ]),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ElevatedButton(
+                    style: style,
+                    onPressed: () {
+                      Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ListSalersPage()));
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.person_search, size: 70),
+                        Text('Liste des vendeurs',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        ))
+                    ]),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ElevatedButton(
+                    style: style,
+                   onPressed: () {
+                      
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.bar_chart, size: 70),
+                        Text('Statistiques',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        ))
+                    ]),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         beginOffset: Offset(0.0, 0.3),

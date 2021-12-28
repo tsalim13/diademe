@@ -50,6 +50,7 @@ class _ListSalersState extends State<ListSalersPage> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     final ButtonStyle style = ElevatedButton.styleFrom(
         textStyle: const TextStyle(fontSize: 25),
         elevation: 15,
@@ -74,111 +75,114 @@ class _ListSalersState extends State<ListSalersPage> {
         isLoading
             ? Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
-                child: DataTable(
-                  // sortColumnIndex: 1,
-                  // sortAscending: true,
-                  columns: [
-                    DataColumn(
-                      label: Text(
-                        'Image',
+                child: FittedBox(
+                  child: DataTable(
+                    // sortColumnIndex: 1,
+                    // sortAscending: true,
+                    columns: [
+                      DataColumn(
+                        label: Text(
+                          'Image',
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Nom',
+                      DataColumn(
+                        label: Text(
+                          'Nom',
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Numéro de téléphoe',
+                      DataColumn(
+                        label: Text(
+                          'Téléphoe',
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Date de naissance',
+                      DataColumn(
+                        label: Text(
+                          'Date de naissance',
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Date de début',
+                      DataColumn(
+                        label: Text(
+                          'Date de début',
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Actif',
+                      DataColumn(
+                        label: Text(
+                          'Actif',
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Actions',
+                      DataColumn(
+                        label: Text(
+                          'Actions',
+                        ),
                       ),
-                    ),
-                  ],
-                  rows: [
-                    for (int i = 0; i < _salers.length; i++)
-                      DataRow(
-                        cells: <DataCell>[
-                          DataCell(
-                            Container(
-                              padding: EdgeInsets.only(right: 50),
-                              width: 100,
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child: Container(
-                                  child: Card(
-                                    elevation: 1.0,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(300),
-                                        side: BorderSide(
-                                            width: 3,
-                                            color: Theme.of(context)
-                                                .primaryColor)),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(300),
-                                      child: Image.file(
-                                        File(_databaseState.path +
-                                            '/' +
-                                            _salers[i].image),
-                                        fit: BoxFit.fill,
-                                        alignment: Alignment.center,
+                    ],
+                    rows: [
+                      for (int i = 0; i < _salers.length; i++)
+                        DataRow(
+                          cells: <DataCell>[
+                            DataCell(
+                              Container(
+                                width: 50,
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: Container(
+                                    child: Card(
+                                      elevation: 1.0,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(300),
+                                          side: BorderSide(
+                                              width: 1,
+                                              color: Theme.of(context)
+                                                  .primaryColor)),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(300),
+                                        child: Image.file(
+                                          File(_databaseState.path +
+                                              '/' +
+                                              _salers[i].image),
+                                          fit: BoxFit.fill,
+                                          alignment: Alignment.center,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.white54,
-                                        blurRadius: 5.0,
-                                        offset: Offset(0, 15),
-                                        spreadRadius: 0.5,
-                                      ),
-                                    ],
-                                    borderRadius: BorderRadius.circular(300),
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.white54,
+                                          blurRadius: 5.0,
+                                          offset: Offset(0, 15),
+                                          spreadRadius: 0.5,
+                                        ),
+                                      ],
+                                      borderRadius: BorderRadius.circular(300),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          DataCell(Text(_salers[i].name)),
-                          DataCell(Text(_salers[i].phone)),
-                          DataCell(Text(_salers[i].birthday)),
-                          DataCell(Text(_salers[i].startday)),
-                          DataCell(_salers[i].actif
-                              ? Icon(Icons.check, color: Colors.green)
-                              : Icon(Icons.dangerous_outlined,
-                                  color: Colors.red)),
-                          DataCell(Row(
-                            children: [
-                              IconButton(
-                                  onPressed: () {}, icon: Icon(Icons.edit)),
-                              IconButton(
-                                  onPressed: () {}, icon: Icon(Icons.delete))
-                            ],
-                          )),
-                        ],
-                      ),
-                  ],
+                            DataCell(ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: width *0.2),
+                              child: Text(_salers[i].name))),
+                            DataCell(Text(_salers[i].phone)),
+                            DataCell(Text(_salers[i].birthday)),
+                            DataCell(Text(_salers[i].startday)),
+                            DataCell(_salers[i].actif
+                                ? Icon(Icons.check, color: Colors.green)
+                                : Icon(Icons.dangerous_outlined,
+                                    color: Colors.red)),
+                            DataCell(Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () {}, icon: Icon(Icons.edit, color: Colors.blue)),
+                                IconButton(
+                                    onPressed: () {}, icon: Icon(Icons.delete, color: Colors.red))
+                              ],
+                            )),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
               ),
         beginOffset: Offset(0.0, 0.3),

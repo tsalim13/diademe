@@ -32,7 +32,8 @@ class _AddSalerState extends State<AddSaler> {
 
   @override
   void initState() {
-    _databaseState = BlocProvider.of<DatabaseBloc>(context).state as LoadedDatabaseState;
+    _databaseState =
+        BlocProvider.of<DatabaseBloc>(context).state as LoadedDatabaseState;
     super.initState();
     // SystemChrome.setPreferredOrientations([
     //     DeviceOrientation.portraitUp,
@@ -59,348 +60,372 @@ class _AddSalerState extends State<AddSaler> {
         fixedSize: Size(250, 250));
     var locale = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(
-              Icons.chevron_left,
-              size: 30,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-        title: Text('Ajouter un nouveau vendeur'),
-        centerTitle: true,
-      ),
-      body: FadedSlideAnimation(
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 25, vertical: 25),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              'Nom complet',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption!
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.67,
-                                      color: Colors.grey[850],
-                                      fontSize: 17),
-                            ),
-                            EntryField('Nom et prénom', validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Veuillez saisir le nom du vendeur';
-                              }
-                              return null;
-                            }, textFieldController: nameFieldController),
-                            SizedBox(height: 20),
-                            Text(
-                              'Numéro de téléphone',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption!
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.67,
-                                      color: Colors.grey[850],
-                                      fontSize: 17),
-                            ),
-                            EntryField('0666 006 006',
-                                textFieldController: phoneFieldController),
-                            SizedBox(height: 20),
-                            Text(
-                              'Date de naissance',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption!
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.67,
-                                      color: Colors.grey[850],
-                                      fontSize: 17),
-                            ),
-                            Row(
-                              children: [
-                                Flexible(
-                                    child: EntryField(
-                                  '15/07/1995',
-                                  initialValue: _birthday,
-                                  enabled: false,
-                                  //textFieldController: birthdayFieldController
-                                )),
-                                IconButton(
-                                    onPressed: () async {
-                                      DateTime? birthday = await showDatePicker(
-                                          context: context,
-                                          locale: Locale('fr'),
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(1940),
-                                          lastDate:
-                                              DateTime(DateTime.now().year)
-                                                  .add(Duration(days: 365)));
-                                      setState(() {
-                                        if (birthday != null) {
-                                          _birthday = DateFormat('dd/MM/yyyy')
-                                              .format(birthday);
-                                        } else {
-                                          _birthday = null;
-                                        }
-                                      });
-                                    },
-                                    icon: const Icon(Icons.calendar_today))
-                              ],
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                              'Date du début de service',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption!
-                                  .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.67,
-                                      color: Colors.grey[850],
-                                      fontSize: 17),
-                            ),
-                            Row(
-                              children: [
-                                Flexible(
-                                    child: EntryField(
-                                  '15/07/1995',
-                                  initialValue: _startDay,
-                                  enabled: false,
-                                  //textFieldController: startdayFieldController
-                                )),
-                                IconButton(
-                                    onPressed: () async {
-                                      DateTime? start = await showDatePicker(
-                                          context: context,
-                                          locale: Locale('fr'),
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(1940),
-                                          lastDate:
-                                              DateTime(DateTime.now().year)
-                                                  .add(Duration(days: 365)));
-                                      setState(() {
-                                        if (start != null) {
-                                          _startDay = DateFormat('dd/MM/yyyy')
-                                              .format(start);
-                                        } else {
-                                          _startDay = null;
-                                        }
-                                      });
-                                    },
-                                    icon: const Icon(Icons.calendar_today))
-                              ],
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Text(
-                                  'Active',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .caption!
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.67,
-                                          color: Colors.grey[850],
-                                          fontSize: 17),
-                                ),
-                                SizedBox(width: 20),
-                                Transform.scale(
-                                  scale: 1.3,
-                                  child: Switch(
-                                    value: _isActive,
-                                    activeColor: Theme.of(context).primaryColor,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _isActive = value;
-                                      });
-                                    },
+        appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(
+                Icons.chevron_left,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+          title: Text('Ajouter un nouveau vendeur'),
+          centerTitle: true,
+        ),
+        body: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+          return FadedSlideAnimation(
+            SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 25),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    'Nom complet',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption!
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.67,
+                                            color: Colors.grey[850],
+                                            fontSize: 17),
                                   ),
-                                ),
-                              ],
-                            )
-                          ]),
-                    ),
-                  ),
-                ),
-                VerticalDivider(thickness: 3),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 25, vertical: 25),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 380,
-                            height: 380,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(300),
-                              child: croppedImage == null
-                                  ? Image.asset(
-                                      'assets/default.png',
-                                      fit: BoxFit.fill,
-                                    )
-                                  : Image.file(
-                                      croppedImage!,
-                                      fit: BoxFit.fill,
-                                    ),
-                            ),
-                          ),
-                          SizedBox(height: 25),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 270,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      textStyle: const TextStyle(
-                                          fontSize: 21,
-                                          fontWeight: FontWeight.w500),
-                                      elevation: 15,
-                                      primary: Theme.of(context)
-                                          .primaryColor
-                                          .withOpacity(0.7),
-                                      onPrimary: Colors.black,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10)),
-                                  onPressed: () async {
-                                    XFile? imageFile = await ImagePicker()
-                                        .pickImage(source: ImageSource.gallery);
-                                    if (imageFile != null) {
-                                      File? croppedFile =
-                                          await ImageCropper.cropImage(
-                                        sourcePath: imageFile.path,
-                                        aspectRatioPresets: [
-                                          CropAspectRatioPreset.square
-                                        ],
-                                      );
-                                      setState(() {
-                                        croppedImage = croppedFile;
-                                      });
+                                  EntryField('Nom et prénom',
+                                      validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez saisir le nom du vendeur';
                                     }
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    return null;
+                                  }, textFieldController: nameFieldController),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'Numéro de téléphone',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption!
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.67,
+                                            color: Colors.grey[850],
+                                            fontSize: 17),
+                                  ),
+                                  EntryField('0666 006 006',
+                                      textFieldController:
+                                          phoneFieldController),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'Date de naissance',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption!
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.67,
+                                            color: Colors.grey[850],
+                                            fontSize: 17),
+                                  ),
+                                  Row(
                                     children: [
-                                      Icon(Icons.photo_camera),
-                                      SizedBox(width: 10),
-                                      Text('Ajouter une photo')
+                                      Flexible(
+                                          child: EntryField(
+                                        '15/07/1995',
+                                        initialValue: _birthday,
+                                        enabled: false,
+                                        //textFieldController: birthdayFieldController
+                                      )),
+                                      IconButton(
+                                          onPressed: () async {
+                                            DateTime? birthday =
+                                                await showDatePicker(
+                                                    context: context,
+                                                    locale: Locale('fr'),
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime(1940),
+                                                    lastDate: DateTime(
+                                                            DateTime.now().year)
+                                                        .add(Duration(
+                                                            days: 365)));
+                                            setState(() {
+                                              if (birthday != null) {
+                                                _birthday =
+                                                    DateFormat('dd/MM/yyyy')
+                                                        .format(birthday);
+                                              } else {
+                                                _birthday = null;
+                                              }
+                                            });
+                                          },
+                                          icon:
+                                              const Icon(Icons.calendar_today))
                                     ],
                                   ),
-                                ),
-                              ),
-                              Container(
-                                width: 50,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      textStyle: const TextStyle(
-                                          fontSize: 21,
-                                          fontWeight: FontWeight.w500),
-                                      elevation: 15,
-                                      primary: Colors.red.withOpacity(0.7),
-                                      onPrimary: Colors.black,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10)),
-                                  onPressed: () {
-                                    setState(() {
-                                      croppedImage = null;
-                                    });
-                                  },
-                                  child: Icon(Icons.delete),
-                                ),
-                              )
-                            ],
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'Date du début de service',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption!
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.67,
+                                            color: Colors.grey[850],
+                                            fontSize: 17),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                          child: EntryField(
+                                        '15/07/1995',
+                                        initialValue: _startDay,
+                                        enabled: false,
+                                        //textFieldController: startdayFieldController
+                                      )),
+                                      IconButton(
+                                          onPressed: () async {
+                                            DateTime? start =
+                                                await showDatePicker(
+                                                    context: context,
+                                                    locale: Locale('fr'),
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime(1940),
+                                                    lastDate: DateTime(
+                                                            DateTime.now().year)
+                                                        .add(Duration(
+                                                            days: 365)));
+                                            setState(() {
+                                              if (start != null) {
+                                                _startDay =
+                                                    DateFormat('dd/MM/yyyy')
+                                                        .format(start);
+                                              } else {
+                                                _startDay = null;
+                                              }
+                                            });
+                                          },
+                                          icon:
+                                              const Icon(Icons.calendar_today))
+                                    ],
+                                  ),
+                                  SizedBox(height: 20),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Active',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .caption!
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.67,
+                                                color: Colors.grey[850],
+                                                fontSize: 17),
+                                      ),
+                                      SizedBox(width: 20),
+                                      Transform.scale(
+                                        scale: 1.3,
+                                        child: Switch(
+                                          value: _isActive,
+                                          activeColor:
+                                              Theme.of(context).primaryColor,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _isActive = value;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ]),
                           ),
-                        ]),
+                        ),
+                      ),
+                      VerticalDivider(thickness: 3),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 25),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width/3,
+                                  height:  MediaQuery.of(context).size.width/3,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(300),
+                                    child: croppedImage == null
+                                        ? Image.asset(
+                                            'assets/default.png',
+                                            fit: BoxFit.fill,
+                                          )
+                                        : Image.file(
+                                            croppedImage!,
+                                            fit: BoxFit.fill,
+                                          ),
+                                  ),
+                                ),
+                                SizedBox(height: 25),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 270,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            textStyle: const TextStyle(
+                                                fontSize: 21,
+                                                fontWeight: FontWeight.w500),
+                                            elevation: 15,
+                                            primary: Theme.of(context)
+                                                .primaryColor
+                                                .withOpacity(0.7),
+                                            onPrimary: Colors.black,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10)),
+                                        onPressed: () async {
+                                          XFile? imageFile = await ImagePicker()
+                                              .pickImage(
+                                                  source: ImageSource.gallery);
+                                          if (imageFile != null) {
+                                            File? croppedFile =
+                                                await ImageCropper.cropImage(
+                                              sourcePath: imageFile.path,
+                                              aspectRatioPresets: [
+                                                CropAspectRatioPreset.square
+                                              ],
+                                            );
+                                            setState(() {
+                                              croppedImage = croppedFile;
+                                            });
+                                          }
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.photo_camera),
+                                            SizedBox(width: 10),
+                                            Text('Ajouter une photo')
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 50,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            textStyle: const TextStyle(
+                                                fontSize: 21,
+                                                fontWeight: FontWeight.w500),
+                                            elevation: 15,
+                                            primary:
+                                                Colors.red.withOpacity(0.7),
+                                            onPrimary: Colors.black,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10)),
+                                        onPressed: () {
+                                          setState(() {
+                                            croppedImage = null;
+                                          });
+                                        },
+                                        child: Icon(Icons.delete),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ]),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        textStyle: const TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold),
-                        elevation: 15,
-                        primary:
-                            Theme.of(context).primaryColor.withOpacity(0.9),
-                        onPrimary: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 12)),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        if (croppedImage == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                backgroundColor: Colors.orange,
-                                content:
-                                    Text('Veuillez séléctionner une photo', style: TextStyle(fontSize: 21))),
-                          );
-                        } else {
-                          try {
-                            String newImageName = DateTime.now()
-                                    .millisecondsSinceEpoch
-                                    .toString() +
-                                croppedImage!.path.split('/').last;
-                            File newImage = croppedImage!
-                                .copySync(_databaseState.path + "/" + newImageName);
-                            await _databaseState.salerDao.insertSaler(Saler(
-                                name: nameFieldController.text,
-                                phone: phoneFieldController.text,
-                                birthday: _birthday ?? '',
-                                startday: _startDay ?? '',
-                                actif: _isActive,
-                                image: newImage.path.split('/').last));
-                                var a = await _databaseState.salerDao.findAllSalers();
-                            setState(() {
-                              croppedImage = null;
-                              nameFieldController.text = '';
-                              phoneFieldController.text = '';
-                              _birthday = null;
-                              _startDay = null;
-                            });
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  backgroundColor: Colors.red,
-                                  content: Text('Erreur', style: TextStyle(fontSize: 21))),
-                            );
-                          }
-                        }
-                      }
-                    },
-                    child: Text('Valider'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              textStyle: const TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
+                              elevation: 15,
+                              primary: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.9),
+                              onPrimary: Colors.black,
+                              padding: EdgeInsets.symmetric(vertical: 12)),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              if (croppedImage == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      backgroundColor: Colors.orange,
+                                      content: Text(
+                                          'Veuillez séléctionner une photo',
+                                          style: TextStyle(fontSize: 21))),
+                                );
+                              } else {
+                                try {
+                                  String newImageName = DateTime.now()
+                                          .millisecondsSinceEpoch
+                                          .toString() +
+                                      croppedImage!.path.split('/').last;
+                                  File newImage = croppedImage!.copySync(
+                                      _databaseState.path + "/" + newImageName);
+                                  await _databaseState.salerDao.insertSaler(
+                                      Saler(
+                                          name: nameFieldController.text,
+                                          phone: phoneFieldController.text,
+                                          birthday: _birthday ?? '',
+                                          startday: _startDay ?? '',
+                                          actif: _isActive,
+                                          image:
+                                              newImage.path.split('/').last));
+                                  var a = await _databaseState.salerDao
+                                      .findAllSalers();
+                                  setState(() {
+                                    croppedImage = null;
+                                    nameFieldController.text = '';
+                                    phoneFieldController.text = '';
+                                    _birthday = null;
+                                    _startDay = null;
+                                  });
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content: Text('Erreur',
+                                            style: TextStyle(fontSize: 21))),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                          child: Text('Valider'),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
-        ),
-        beginOffset: Offset(0.0, 0.3),
-        endOffset: Offset(0, 0),
-        slideCurve: Curves.linearToEaseOut,
-      ),
-    );
+            beginOffset: Offset(0.0, 0.3),
+            endOffset: Offset(0, 0),
+            slideCurve: Curves.linearToEaseOut,
+          );
+        }));
   }
 }

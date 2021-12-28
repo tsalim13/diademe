@@ -37,283 +37,262 @@ class _HomePageState extends State<HomePage> {
     var locale = AppLocalizations.of(context)!;
     Size _size = MediaQuery.of(context).size;
     double wdth = (_size.width - 60) / _salers.length;
-    maxWidth = wdth < (_size.height - 250) ? wdth : (_size.height - 250);
+    maxWidth = wdth < (_size.height - 120) ? wdth : (_size.height - 120);
     return Scaffold(
-      body: BlocConsumer<DatabaseBloc, DatabaseState>(
-        listener: (context, state) async {
-          if (state is LoadedDatabaseState) {
-            _salers = await state.salerDao.findAllActifSalers();
-            setState(() {
-              fittingCount = _salers.length - _salers.length % CROSS_AXIS_COUNT;
-              isLoading = false;
-            });
-          }
-        },
-        builder: (context, state) {
-          return state is InitialDatabaseState || isLoading
-              ? Center(child: CircularProgressIndicator())
-              : FadedSlideAnimation(
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40, bottom: 25),
-                          child: Row(
+      body: SafeArea(
+        child: BlocConsumer<DatabaseBloc, DatabaseState>(
+          listener: (context, state) async {
+            if (state is LoadedDatabaseState) {
+              _salers = await state.salerDao.findAllActifSalers();
+              setState(() {
+                fittingCount = _salers.length - _salers.length % CROSS_AXIS_COUNT;
+                isLoading = false;
+              });
+            }
+          },
+          builder: (context, state) {
+            return state is InitialDatabaseState || isLoading
+                ? Center(child: CircularProgressIndicator())
+                : FadedSlideAnimation(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onLongPress: () {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginUi()));
+                                  },
+                                  child: FadedScaleAnimation(
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                'Diadème',
+                                                style: TextStyle(
+                                                  letterSpacing: 2.5,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "Edwardian",
+                                                    color: Colors.black,
+                                                    fontSize: 70)),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                                'Feedback',
+                                                style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                    fontSize: 20)),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    durationInMilliseconds: 600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          
+                          // Container(
+                          //   height: h-180,
+                          //   alignment: Alignment.center,
+                          //   child: LayoutBuilder(builder: (context, constraints) {
+                          //     return StaggeredGridView.countBuilder(
+                          //         crossAxisCount: CROSS_AXIS_COUNT,
+                          //         shrinkWrap: true,
+                          //         mainAxisSpacing: 15,
+                          //         crossAxisSpacing: 15,
+                          //         itemCount: _salers.length == fittingCount
+                          //             ? fittingCount
+                          //             : fittingCount + 1,
+                          //         itemBuilder: (context, index) {
+                          //           if (index < fittingCount) {
+                          //             return AspectRatio(
+                          //               aspectRatio: 1,
+                          //               child: Container(
+                          //                 child: Card(
+                          //                   elevation: 5.0,
+                          //                   shape: RoundedRectangleBorder(
+                          //                     borderRadius:
+                          //                         BorderRadius.circular(300),
+                          //                     side: BorderSide(width: 2, color: Theme.of(context).primaryColor)
+                          //                   ),
+                          //                   child: ClipRRect(
+                          //                     borderRadius:
+                          //                         BorderRadius.circular(300),
+                          //                     child: Center(
+                          //                       child: Image.file(
+                          //                         File(
+                          //                             (state as LoadedDatabaseState)
+                          //                                     .path +
+                          //                                 "/" +
+                          //                                 _salers[index].image),
+                          //                         fit: BoxFit.fill,
+                          //                       ),
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //                 decoration: BoxDecoration(
+                          //                   boxShadow: [
+                          //                     BoxShadow(
+                          //                       color: Colors.white54,
+                          //                       blurRadius: 5.0,
+                          //                       offset: Offset(0, 10),
+                          //                       spreadRadius: 0.5,
+                          //                     ),
+                          //                   ],
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(12),
+                          //                 ),
+                          //               ),
+                          //             );
+                          //           } else {
+                          //             return Row(
+                          //                 mainAxisAlignment:
+                          //                     MainAxisAlignment.center,
+                          //                 children: _salers
+                          //                     .sublist(
+                          //                         fittingCount, _salers.length)
+                          //                     .map((m) {
+                          //                   return Container(
+                          //                     width: constraints.maxWidth /
+                          //                             CROSS_AXIS_COUNT -
+                          //                         15,
+                          //                     child: AspectRatio(
+                          //                       aspectRatio: 1,
+                          //                       child: Container(
+                          //                         child: Card(
+                          //                           elevation: 5.0,
+                          //                           shape: RoundedRectangleBorder(
+                          //                             borderRadius:
+                          //                                 BorderRadius.circular(
+                          //                                     300),
+                          //                             side: BorderSide(width: 3, color: Theme.of(context).primaryColor)
+                          //                           ),
+                          //                           child: ClipRRect(
+                          //                             borderRadius:
+                          //                                 BorderRadius.circular(
+                          //                                     300),
+                          //                             child: Center(
+                          //                               child: Image.file(
+                          //                                 File(
+                          //                                     (state as LoadedDatabaseState)
+                          //                                             .path +
+                          //                                         "/" +
+                          //                                         _salers[index]
+                          //                                             .image),
+                          //                                 fit: BoxFit.fill,
+                          //                               ),
+                          //                             ),
+                          //                           ),
+                          //                         ),
+                          //                         decoration: BoxDecoration(
+                          //                           boxShadow: [
+                          //                             BoxShadow(
+                          //                               color: Colors.white54,
+                          //                               blurRadius: 5.0,
+                          //                               offset: Offset(0, 15),
+                          //                               spreadRadius: 0.5,
+                          //                             ),
+                          //                           ],
+                          //                           borderRadius:
+                          //                               BorderRadius.circular(12),
+                          //                         ),
+                          //                       ),
+                          //                     ),
+                          //                   );
+                          //                 }).toList());
+                          //           }
+                          //         },
+                          //         staggeredTileBuilder: (int index) {
+                          //           if (index < fittingCount) {
+                          //             return StaggeredTile.count(1, 1);
+                          //           } else {
+                          //             return StaggeredTile.count(
+                          //                 CROSS_AXIS_COUNT, 1);
+                          //           }
+                          //         });
+                          //   }),
+                          // ),
+                          Spacer(),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              GestureDetector(
-                                onDoubleTap: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => LoginUi()));
-                                },
-                                child: FadedScaleAnimation(
-                                  RichText(
-                                    text: TextSpan(
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1!
-                                            .copyWith(
-                                                letterSpacing: 2,
-                                                fontWeight: FontWeight.bold),
-                                        children: <TextSpan>[
-                                          TextSpan(
-                                              text: 'Diademe',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 40)),
-                                          TextSpan(
-                                              text: 'Feedback',
-                                              style: TextStyle(
+                              for (int i = 0; i < _salers.length; i++)
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ReviewPage(saler: _salers[i])));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.only(right: 8),
+                                    width: maxWidth,
+                                    child: AspectRatio(
+                                      aspectRatio: 1,
+                                      child: Container(
+                                        child: Card(
+                                          elevation: 5.0,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(300),
+                                              side: BorderSide(
+                                                  width: 3,
                                                   color: Theme.of(context)
-                                                      .primaryColor,
-                                                  fontSize: 40)),
-                                        ]),
-                                  ),
-                                  durationInMilliseconds: 600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Container(
-                        //   height: h-180,
-                        //   alignment: Alignment.center,
-                        //   child: LayoutBuilder(builder: (context, constraints) {
-                        //     return StaggeredGridView.countBuilder(
-                        //         crossAxisCount: CROSS_AXIS_COUNT,
-                        //         shrinkWrap: true,
-                        //         mainAxisSpacing: 15,
-                        //         crossAxisSpacing: 15,
-                        //         itemCount: _salers.length == fittingCount
-                        //             ? fittingCount
-                        //             : fittingCount + 1,
-                        //         itemBuilder: (context, index) {
-                        //           if (index < fittingCount) {
-                        //             return AspectRatio(
-                        //               aspectRatio: 1,
-                        //               child: Container(
-                        //                 child: Card(
-                        //                   elevation: 5.0,
-                        //                   shape: RoundedRectangleBorder(
-                        //                     borderRadius:
-                        //                         BorderRadius.circular(300),
-                        //                     side: BorderSide(width: 2, color: Theme.of(context).primaryColor)
-                        //                   ),
-                        //                   child: ClipRRect(
-                        //                     borderRadius:
-                        //                         BorderRadius.circular(300),
-                        //                     child: Center(
-                        //                       child: Image.file(
-                        //                         File(
-                        //                             (state as LoadedDatabaseState)
-                        //                                     .path +
-                        //                                 "/" +
-                        //                                 _salers[index].image),
-                        //                         fit: BoxFit.fill,
-                        //                       ),
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //                 decoration: BoxDecoration(
-                        //                   boxShadow: [
-                        //                     BoxShadow(
-                        //                       color: Colors.white54,
-                        //                       blurRadius: 5.0,
-                        //                       offset: Offset(0, 10),
-                        //                       spreadRadius: 0.5,
-                        //                     ),
-                        //                   ],
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(12),
-                        //                 ),
-                        //               ),
-                        //             );
-                        //           } else {
-                        //             return Row(
-                        //                 mainAxisAlignment:
-                        //                     MainAxisAlignment.center,
-                        //                 children: _salers
-                        //                     .sublist(
-                        //                         fittingCount, _salers.length)
-                        //                     .map((m) {
-                        //                   return Container(
-                        //                     width: constraints.maxWidth /
-                        //                             CROSS_AXIS_COUNT -
-                        //                         15,
-                        //                     child: AspectRatio(
-                        //                       aspectRatio: 1,
-                        //                       child: Container(
-                        //                         child: Card(
-                        //                           elevation: 5.0,
-                        //                           shape: RoundedRectangleBorder(
-                        //                             borderRadius:
-                        //                                 BorderRadius.circular(
-                        //                                     300),
-                        //                             side: BorderSide(width: 3, color: Theme.of(context).primaryColor)
-                        //                           ),
-                        //                           child: ClipRRect(
-                        //                             borderRadius:
-                        //                                 BorderRadius.circular(
-                        //                                     300),
-                        //                             child: Center(
-                        //                               child: Image.file(
-                        //                                 File(
-                        //                                     (state as LoadedDatabaseState)
-                        //                                             .path +
-                        //                                         "/" +
-                        //                                         _salers[index]
-                        //                                             .image),
-                        //                                 fit: BoxFit.fill,
-                        //                               ),
-                        //                             ),
-                        //                           ),
-                        //                         ),
-                        //                         decoration: BoxDecoration(
-                        //                           boxShadow: [
-                        //                             BoxShadow(
-                        //                               color: Colors.white54,
-                        //                               blurRadius: 5.0,
-                        //                               offset: Offset(0, 15),
-                        //                               spreadRadius: 0.5,
-                        //                             ),
-                        //                           ],
-                        //                           borderRadius:
-                        //                               BorderRadius.circular(12),
-                        //                         ),
-                        //                       ),
-                        //                     ),
-                        //                   );
-                        //                 }).toList());
-                        //           }
-                        //         },
-                        //         staggeredTileBuilder: (int index) {
-                        //           if (index < fittingCount) {
-                        //             return StaggeredTile.count(1, 1);
-                        //           } else {
-                        //             return StaggeredTile.count(
-                        //                 CROSS_AXIS_COUNT, 1);
-                        //           }
-                        //         });
-                        //   }),
-                        // ),
-                        Spacer(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            for (int i = 0; i < _salers.length; i++)
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ReviewPage(saler: _salers[i])));
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  width: maxWidth,
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: Container(
-                                      child: Card(
-                                        elevation: 5.0,
-                                        shape: RoundedRectangleBorder(
+                                                      .primaryColor)),
+                                          child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(300),
-                                            side: BorderSide(
-                                                width: 3,
-                                                color: Theme.of(context)
-                                                    .primaryColor)),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(300),
-                                          child: Image.file(
-                                            File((state as LoadedDatabaseState)
-                                                    .path +
-                                                "/" +
-                                                _salers[i].image),
-                                            fit: BoxFit.fill,
-                                            alignment: Alignment.center,
+                                            child: Image.file(
+                                              File((state as LoadedDatabaseState)
+                                                      .path +
+                                                  "/" +
+                                                  _salers[i].image),
+                                              fit: BoxFit.fill,
+                                              alignment: Alignment.center,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.white54,
-                                            blurRadius: 5.0,
-                                            offset: Offset(0, 15),
-                                            spreadRadius: 0.5,
-                                          ),
-                                        ],
-                                        borderRadius:
-                                            BorderRadius.circular(300),
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.white54,
+                                              blurRadius: 5.0,
+                                              offset: Offset(0, 15),
+                                              spreadRadius: 0.5,
+                                            ),
+                                          ],
+                                          borderRadius:
+                                              BorderRadius.circular(300),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                          ],
-                        ),
-                        Spacer(),
-                        FadedScaleAnimation(
-                          Row(
-                            children: [
-                              Text(locale.giveYour!,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subtitle1!
-                                      .copyWith(
-                                          letterSpacing: 1, fontSize: 25)),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(locale.feedback!,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subtitle1!
-                                      .copyWith(
-                                          letterSpacing: 1,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          durationInMilliseconds: 600,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                      ],
-                    ),
-                  ),
-                  beginOffset: Offset(0.0, 0.3),
-                  endOffset: Offset(0, 0),
-                  slideCurve: Curves.linearToEaseOut,
-                );
-        },
+                          Spacer(),
+                          
+                        ],
+                      ),
+                    beginOffset: Offset(0.0, 0.3),
+                    endOffset: Offset(0, 0),
+                    slideCurve: Curves.linearToEaseOut,
+                  );
+          },
+        ),
       ),
     );
   }
