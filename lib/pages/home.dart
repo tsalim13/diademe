@@ -39,7 +39,8 @@ class _HomePageState extends State<HomePage> {
     double wdth = (_size.width - 60) / _salers.length;
     maxWidth = wdth < (_size.height - 120) ? wdth : (_size.height - 120);
     return Scaffold(
-      body: SafeArea(
+      body: Padding(
+        padding: EdgeInsets.only(top: 10, bottom: 15),
         child: BlocConsumer<DatabaseBloc, DatabaseState>(
           listener: (context, state) async {
             if (state is LoadedDatabaseState) {
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                                                   fontWeight: FontWeight.bold,
                                                   fontFamily: "Edwardian",
                                                     color: Colors.black,
-                                                    fontSize: 70)),
+                                                    fontSize: 75)),
                                           ],
                                         ),
                                         Row(

@@ -394,15 +394,20 @@ class _AddSalerState extends State<AddSaler> {
                                           actif: _isActive,
                                           image:
                                               newImage.path.split('/').last));
-                                  var a = await _databaseState.salerDao
-                                      .findAllSalers();
                                   setState(() {
                                     croppedImage = null;
                                     nameFieldController.text = '';
                                     phoneFieldController.text = '';
                                     _birthday = null;
                                     _startDay = null;
+                                    _isActive = true;
                                   });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        backgroundColor: Colors.green,
+                                        content: Text('Vendeur ajouté avec succés',
+                                            style: TextStyle(fontSize: 21))),
+                                  );
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

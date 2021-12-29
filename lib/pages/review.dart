@@ -44,7 +44,8 @@ class _ReviewPageState extends State<ReviewPage> {
           physics: ClampingScrollPhysics(),
           child: FadedSlideAnimation(
             Container(
-              height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+              height: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top,
               padding: EdgeInsets.symmetric(horizontal: 25),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +93,6 @@ class _ReviewPageState extends State<ReviewPage> {
                           ),
                         ),
                       ),
-                      
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,7 +112,8 @@ class _ReviewPageState extends State<ReviewPage> {
                                 children: [
                                   Icon(Icons.star_border,
                                       size: 250, color: Colors.amber),
-                                  Icon(Icons.star, size: 120, color: Colors.amber),
+                                  Icon(Icons.star,
+                                      size: 120, color: Colors.amber),
                                 ],
                               ),
                               half: Icon(Icons.star_border,
@@ -133,48 +134,59 @@ class _ReviewPageState extends State<ReviewPage> {
                               print(rating);
                             },
                           ),
-                          SizedBox(height: 30),
+                          SizedBox(height: 25),
                           Container(
                             width: 450,
                             child: EntryField('Un commentaire ?',
                                 maxLines: 3,
-                                fontSize: 23,
+                                fontSize: 20,
                                 textFieldController: _commentFieldController),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  Spacer(),
+                  Spacer(flex: 3),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      Spacer(),
                       GestureDetector(
                         onTap: () {
                           Navigator.pop(context);
                         },
-                        child: ColorButton(locale.cancel,
-                            height: 55, width: 200, fontSize: 27),
+                        child: ColorButton("Retour",
+                            height: 55, width: 180, fontSize: 25),
                       ),
+                      Spacer(flex: 3),
                       GestureDetector(
                         onTap: () {
+                          if (_mark>0) {
                           showDialog<void>(
                               context: context,
                               builder: (BuildContext context) => AlertDialog(
-                                    //title: const Text('AlertDialog Title'),
+                                    title: Text(
+                                        "Confirmez-vous votre feedback?",
+                                        softWrap: true,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(fontSize: 20)),
                                     content: Column(
                                       mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Container(
-                                              padding: EdgeInsets.only(right: 20),
-                                              width: 170,
+                                              padding:
+                                                  EdgeInsets.only(right: 15),
+                                              width: 150,
                                               child: AspectRatio(
                                                 aspectRatio: 1,
                                                 child: Container(
@@ -182,20 +194,25 @@ class _ReviewPageState extends State<ReviewPage> {
                                                     elevation: 1.0,
                                                     shape: RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(300),
+                                                            BorderRadius
+                                                                .circular(300),
                                                         side: BorderSide(
                                                             width: 3,
-                                                            color: Theme.of(context)
+                                                            color: Theme.of(
+                                                                    context)
                                                                 .primaryColor)),
                                                     child: ClipRRect(
                                                       borderRadius:
-                                                          BorderRadius.circular(300),
+                                                          BorderRadius.circular(
+                                                              300),
                                                       child: Image.file(
-                                                        File(_databaseState.path +
+                                                        File(_databaseState
+                                                                .path +
                                                             '/' +
                                                             widget.saler.image),
                                                         fit: BoxFit.fill,
-                                                        alignment: Alignment.center,
+                                                        alignment:
+                                                            Alignment.center,
                                                       ),
                                                     ),
                                                   ),
@@ -209,7 +226,8 @@ class _ReviewPageState extends State<ReviewPage> {
                                                       ),
                                                     ],
                                                     borderRadius:
-                                                        BorderRadius.circular(300),
+                                                        BorderRadius.circular(
+                                                            300),
                                                   ),
                                                 ),
                                               ),
@@ -219,7 +237,7 @@ class _ReviewPageState extends State<ReviewPage> {
                                                   MainAxisAlignment.center,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
-                                                  mainAxisSize: MainAxisSize.min,
+                                              mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 RatingBar(
                                                   ignoreGestures: true,
@@ -234,67 +252,107 @@ class _ReviewPageState extends State<ReviewPage> {
                                                   //     Icon(Icons.star, color: Colors.amber),
                                                   ratingWidget: RatingWidget(
                                                     full: Stack(
-                                                      alignment: Alignment.center,
+                                                      alignment:
+                                                          Alignment.center,
                                                       children: [
                                                         Icon(Icons.star_border,
                                                             size: 250,
-                                                            color: Colors.amber),
+                                                            color:
+                                                                Colors.amber),
                                                         Icon(Icons.star,
                                                             size: 120,
-                                                            color: Colors.amber),
+                                                            color:
+                                                                Colors.amber),
                                                       ],
                                                     ),
-                                                    half: Icon(Icons.star_border,
-                                                        size: 90, color: Colors.amber),
+                                                    half: Icon(
+                                                        Icons.star_border,
+                                                        size: 90,
+                                                        color: Colors.amber),
                                                     empty: Stack(
-                                                      alignment: Alignment.center,
+                                                      alignment:
+                                                          Alignment.center,
                                                       children: [
                                                         Icon(Icons.star_border,
                                                             size: 250,
-                                                            color: Colors.grey[350]),
+                                                            color: Colors
+                                                                .grey[350]),
                                                         Icon(Icons.star,
                                                             size: 120,
-                                                            color: Colors.grey[350]),
+                                                            color: Colors
+                                                                .grey[350]),
                                                       ],
                                                     ),
                                                   ),
-                                                  itemSize: 55,
+                                                  itemSize: 60,
                                                   onRatingUpdate: (rating) {
                                                     _mark = rating;
                                                     print(rating);
                                                   },
                                                 ),
-                                                SizedBox(height: 15),
+                                                if (_commentFieldController
+                                                          .text.isNotEmpty)
                                                 Container(
-                                                  width: 250,
-                                                  child: Text(_commentFieldController.text, softWrap: true),
+                                                  padding: EdgeInsets.only(top: 15),
+                                                  width: 300,
+                                                  child: Text(
+                                                      _commentFieldController
+                                                          .text,
+                                                      softWrap: true),
                                                 ),
                                                 SizedBox(height: 30),
                                               ],
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 15),
-                                        Text("Confirmez vous votre feedback?", softWrap: true, style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 25)),
                                       ],
                                     ),
                                     actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context),
-                                        child: const Text('Annuler'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context),
-                                        child: const Text('Confirmer'),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Spacer(),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: ColorButton("Retour",
+                                                  height: 45,
+                                                  width: 150,
+                                                  fontSize: 20),
+                                            ),
+                                            Spacer(flex: 3),
+                                            GestureDetector(
+                                              onTap: () {},
+                                              child: ColorButton("Confirmer",
+                                                  height: 45,
+                                                  width: 150,
+                                                  fontSize: 20),
+                                            ),
+                                            Spacer(),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    duration: Duration(seconds: 1),
+                                      backgroundColor: Colors.orange,
+                                      content: Text(
+                                          'Veuillez attribuer une note',
+                                          style: TextStyle(fontSize: 21))),
+                                );
+                          }
                         },
-                        child: ColorButton(locale.continueText,
-                            height: 55, width: 200, fontSize: 27),
+                        child: ColorButton("Continuer",
+                            height: 55, width: 180, fontSize: 25),
                       ),
+                      Spacer(),
                     ],
                   ),
                   Spacer()

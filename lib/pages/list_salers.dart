@@ -33,7 +33,7 @@ class _ListSalersState extends State<ListSalersPage> {
   }
 
   Future<void> fetchSalers() async {
-    _salers = await _databaseState.salerDao.findAllActifSalers();
+    _salers = await _databaseState.salerDao.findAllSalers();
     setState(() {
       isLoading = false;
     });
@@ -184,8 +184,17 @@ class _ListSalersState extends State<ListSalersPage> {
                                         child: const Text('Annuler'),
                                       ),
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context),
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          await _databaseState.salerDao.deleteSaler(_salers[i]);
+                                          _salers = await _databaseState.salerDao.findAllSalers();
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                        },
                                         child: Text('Supprimer', style: TextStyle(color: Colors.red)),
                                       ),
                                     ],
