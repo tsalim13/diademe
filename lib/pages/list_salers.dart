@@ -51,12 +51,6 @@ class _ListSalersState extends State<ListSalersPage> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final ButtonStyle style = ElevatedButton.styleFrom(
-        textStyle: const TextStyle(fontSize: 25),
-        elevation: 15,
-        primary: Theme.of(context).primaryColor.withOpacity(0.7),
-        onPrimary: Colors.black,
-        fixedSize: Size(250, 250));
     var locale = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -176,7 +170,29 @@ class _ListSalersState extends State<ListSalersPage> {
                                 IconButton(
                                     onPressed: () {}, icon: Icon(Icons.edit, color: Colors.blue)),
                                 IconButton(
-                                    onPressed: () {}, icon: Icon(Icons.delete, color: Colors.red))
+                                    onPressed: () {
+                                      showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                    //title: const Text('AlertDialog Title'),
+                                    content: Text('Êtes-vous sûr de vouloir supprimer le vendeur "'+_salers[i].name+"\"?",
+                                    style: Theme.of(context).textTheme.bodyText1),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        child: const Text('Annuler'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        child: Text('Supprimer', style: TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  ));
+                        
+                                    },
+                                    icon: Icon(Icons.delete, color: Colors.red))
                               ],
                             )),
                           ],

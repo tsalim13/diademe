@@ -14,6 +14,7 @@ class EntryField extends StatelessWidget {
   Widget build(BuildContext context) {
     textFieldController == null ? entryFieldController.text = initialValue ?? '' : textFieldController!.text = textFieldController!.text;
     return TextFormField(
+      textInputAction: TextInputAction.done,
       controller: textFieldController ?? entryFieldController,
       validator: validator,
       enabled: enabled, 

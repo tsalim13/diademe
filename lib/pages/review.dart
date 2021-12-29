@@ -38,268 +38,273 @@ class _ReviewPageState extends State<ReviewPage> {
   Widget build(BuildContext context) {
     var locale = AppLocalizations.of(context)!;
     return Scaffold(
+      //resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: FadedSlideAnimation(
-          Container(
-            height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(right: 50),
-                      width: MediaQuery.of(context).size.height - 100,
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: Container(
-                          child: Card(
-                            elevation: 1.0,
-                            shape: RoundedRectangleBorder(
+        child: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
+          child: FadedSlideAnimation(
+            Container(
+              height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(right: 25),
+                        //width: MediaQuery.of(context).size.height - 100 > 360 ? 360: MediaQuery.of(context).size.height - 100 ,
+                        width: 280,
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            child: Card(
+                              elevation: 1.0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(300),
+                                  side: BorderSide(
+                                      width: 3,
+                                      color: Theme.of(context).primaryColor)),
+                              child: ClipRRect(
                                 borderRadius: BorderRadius.circular(300),
-                                side: BorderSide(
-                                    width: 3,
-                                    color: Theme.of(context).primaryColor)),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(300),
-                              child: Image.file(
-                                File(_databaseState.path +
-                                    '/' +
-                                    widget.saler.image),
-                                fit: BoxFit.fill,
-                                alignment: Alignment.center,
+                                child: Image.file(
+                                  File(_databaseState.path +
+                                      '/' +
+                                      widget.saler.image),
+                                  fit: BoxFit.fill,
+                                  alignment: Alignment.center,
+                                ),
                               ),
                             ),
-                          ),
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white54,
-                                blurRadius: 5.0,
-                                offset: Offset(0, 15),
-                                spreadRadius: 0.5,
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(300),
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white54,
+                                  blurRadius: 5.0,
+                                  offset: Offset(0, 15),
+                                  spreadRadius: 0.5,
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(300),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        RatingBar(
-                          initialRating: 0,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: false,
-                          itemCount: 5,
-                          itemPadding: EdgeInsets.only(right: 8),
-                          // itemBuilder: (context, _) =>
-                          //     Icon(Icons.star, color: Colors.amber),
-                          ratingWidget: RatingWidget(
-                            full: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Icon(Icons.star_border,
-                                    size: 250, color: Colors.amber),
-                                Icon(Icons.star, size: 120, color: Colors.amber),
-                              ],
+                      
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          RatingBar(
+                            initialRating: 0,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: false,
+                            itemCount: 5,
+                            itemPadding: EdgeInsets.only(right: 8),
+                            // itemBuilder: (context, _) =>
+                            //     Icon(Icons.star, color: Colors.amber),
+                            ratingWidget: RatingWidget(
+                              full: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Icon(Icons.star_border,
+                                      size: 250, color: Colors.amber),
+                                  Icon(Icons.star, size: 120, color: Colors.amber),
+                                ],
+                              ),
+                              half: Icon(Icons.star_border,
+                                  size: 90, color: Colors.amber),
+                              empty: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Icon(Icons.star_border,
+                                      size: 250, color: Colors.grey[350]),
+                                  Icon(Icons.star,
+                                      size: 120, color: Colors.grey[350]),
+                                ],
+                              ),
                             ),
-                            half: Icon(Icons.star_border,
-                                size: 90, color: Colors.amber),
-                            empty: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Icon(Icons.star_border,
-                                    size: 250, color: Colors.grey[350]),
-                                Icon(Icons.star,
-                                    size: 120, color: Colors.grey[350]),
-                              ],
-                            ),
+                            itemSize: 90,
+                            onRatingUpdate: (rating) {
+                              _mark = rating;
+                              print(rating);
+                            },
                           ),
-                          itemSize: 80,
-                          onRatingUpdate: (rating) {
-                            _mark = rating;
-                            print(rating);
-                          },
-                        ),
-                        SizedBox(height: 30),
-                        Container(
-                          width: 430,
-                          child: EntryField('Un commentaire ?',
-                              maxLines: 3,
-                              fontSize: 23,
-                              textFieldController: _commentFieldController),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: ColorButton(locale.cancel,
-                          height: 55, width: 200, fontSize: 27),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                  //title: const Text('AlertDialog Title'),
-                                  content: Column(
-                                    mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.only(right: 20),
-                                            width: 170,
-                                            child: AspectRatio(
-                                              aspectRatio: 1,
-                                              child: Container(
-                                                child: Card(
-                                                  elevation: 1.0,
-                                                  shape: RoundedRectangleBorder(
+                          SizedBox(height: 30),
+                          Container(
+                            width: 450,
+                            child: EntryField('Un commentaire ?',
+                                maxLines: 3,
+                                fontSize: 23,
+                                textFieldController: _commentFieldController),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: ColorButton(locale.cancel,
+                            height: 55, width: 200, fontSize: 27),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                    //title: const Text('AlertDialog Title'),
+                                    content: Column(
+                                      mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.only(right: 20),
+                                              width: 170,
+                                              child: AspectRatio(
+                                                aspectRatio: 1,
+                                                child: Container(
+                                                  child: Card(
+                                                    elevation: 1.0,
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(300),
+                                                        side: BorderSide(
+                                                            width: 3,
+                                                            color: Theme.of(context)
+                                                                .primaryColor)),
+                                                    child: ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(300),
-                                                      side: BorderSide(
-                                                          width: 3,
-                                                          color: Theme.of(context)
-                                                              .primaryColor)),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(300),
-                                                    child: Image.file(
-                                                      File(_databaseState.path +
-                                                          '/' +
-                                                          widget.saler.image),
-                                                      fit: BoxFit.fill,
-                                                      alignment: Alignment.center,
+                                                      child: Image.file(
+                                                        File(_databaseState.path +
+                                                            '/' +
+                                                            widget.saler.image),
+                                                        fit: BoxFit.fill,
+                                                        alignment: Alignment.center,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.white54,
-                                                      blurRadius: 5.0,
-                                                      offset: Offset(0, 15),
-                                                      spreadRadius: 0.5,
-                                                    ),
-                                                  ],
-                                                  borderRadius:
-                                                      BorderRadius.circular(300),
+                                                  decoration: BoxDecoration(
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.white54,
+                                                        blurRadius: 5.0,
+                                                        offset: Offset(0, 15),
+                                                        spreadRadius: 0.5,
+                                                      ),
+                                                    ],
+                                                    borderRadius:
+                                                        BorderRadius.circular(300),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              RatingBar(
-                                                ignoreGestures: true,
-                                                initialRating: _mark,
-                                                minRating: 1,
-                                                direction: Axis.horizontal,
-                                                allowHalfRating: false,
-                                                itemCount: 5,
-                                                itemPadding:
-                                                    EdgeInsets.only(right: 8),
-                                                // itemBuilder: (context, _) =>
-                                                //     Icon(Icons.star, color: Colors.amber),
-                                                ratingWidget: RatingWidget(
-                                                  full: Stack(
-                                                    alignment: Alignment.center,
-                                                    children: [
-                                                      Icon(Icons.star_border,
-                                                          size: 250,
-                                                          color: Colors.amber),
-                                                      Icon(Icons.star,
-                                                          size: 120,
-                                                          color: Colors.amber),
-                                                    ],
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                                  mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                RatingBar(
+                                                  ignoreGestures: true,
+                                                  initialRating: _mark,
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemPadding:
+                                                      EdgeInsets.only(right: 8),
+                                                  // itemBuilder: (context, _) =>
+                                                  //     Icon(Icons.star, color: Colors.amber),
+                                                  ratingWidget: RatingWidget(
+                                                    full: Stack(
+                                                      alignment: Alignment.center,
+                                                      children: [
+                                                        Icon(Icons.star_border,
+                                                            size: 250,
+                                                            color: Colors.amber),
+                                                        Icon(Icons.star,
+                                                            size: 120,
+                                                            color: Colors.amber),
+                                                      ],
+                                                    ),
+                                                    half: Icon(Icons.star_border,
+                                                        size: 90, color: Colors.amber),
+                                                    empty: Stack(
+                                                      alignment: Alignment.center,
+                                                      children: [
+                                                        Icon(Icons.star_border,
+                                                            size: 250,
+                                                            color: Colors.grey[350]),
+                                                        Icon(Icons.star,
+                                                            size: 120,
+                                                            color: Colors.grey[350]),
+                                                      ],
+                                                    ),
                                                   ),
-                                                  half: Icon(Icons.star_border,
-                                                      size: 90, color: Colors.amber),
-                                                  empty: Stack(
-                                                    alignment: Alignment.center,
-                                                    children: [
-                                                      Icon(Icons.star_border,
-                                                          size: 250,
-                                                          color: Colors.grey[350]),
-                                                      Icon(Icons.star,
-                                                          size: 120,
-                                                          color: Colors.grey[350]),
-                                                    ],
-                                                  ),
+                                                  itemSize: 55,
+                                                  onRatingUpdate: (rating) {
+                                                    _mark = rating;
+                                                    print(rating);
+                                                  },
                                                 ),
-                                                itemSize: 55,
-                                                onRatingUpdate: (rating) {
-                                                  _mark = rating;
-                                                  print(rating);
-                                                },
-                                              ),
-                                              SizedBox(height: 15),
-                                              Container(
-                                                width: 250,
-                                                child: Text(_commentFieldController.text, softWrap: true),
-                                              ),
-                                              SizedBox(height: 30),
-                                            ],
-                                          ),
-                                        ],
+                                                SizedBox(height: 15),
+                                                Container(
+                                                  width: 250,
+                                                  child: Text(_commentFieldController.text, softWrap: true),
+                                                ),
+                                                SizedBox(height: 30),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 15),
+                                        Text("Confirmez vous votre feedback?", softWrap: true, style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 25)),
+                                      ],
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        child: const Text('Annuler'),
                                       ),
-                                      SizedBox(height: 15),
-                                      Text("Confirmez vous votre feedback?", softWrap: true, style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 25)),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        child: const Text('Confirmer'),
+                                      ),
                                     ],
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context),
-                                      child: const Text('Annuler'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context),
-                                      child: const Text('Confirmer'),
-                                    ),
-                                  ],
-                                ));
-                      },
-                      child: ColorButton(locale.continueText,
-                          height: 55, width: 200, fontSize: 27),
-                    ),
-                  ],
-                ),
-                Spacer()
-              ],
+                                  ));
+                        },
+                        child: ColorButton(locale.continueText,
+                            height: 55, width: 200, fontSize: 27),
+                      ),
+                    ],
+                  ),
+                  Spacer()
+                ],
+              ),
             ),
+            beginOffset: Offset(0.0, 0.3),
+            endOffset: Offset(0, 0),
+            slideCurve: Curves.linearToEaseOut,
           ),
-          beginOffset: Offset(0.0, 0.3),
-          endOffset: Offset(0, 0),
-          slideCurve: Curves.linearToEaseOut,
         ),
       ),
     );
