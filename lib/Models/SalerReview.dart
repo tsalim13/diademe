@@ -13,12 +13,12 @@ import 'package:floor/floor.dart';
 )
 class SalerReview {
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  final int? id;
   @ColumnInfo(name: 'saler_id')
   final int salerId;
   final int mark;
   final String comment;
   final int date;
 
-  SalerReview(this.id, this.salerId, this.mark, this.comment, this.date);
+  SalerReview({this.id, required this.salerId, required this.mark, required this.comment, required this.date});
 }

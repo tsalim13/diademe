@@ -85,7 +85,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Saler` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `phone` TEXT NOT NULL, `birthday` TEXT NOT NULL, `startday` TEXT NOT NULL, `actif` INTEGER NOT NULL, `image` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `saler_review` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `saler_id` INTEGER NOT NULL, `mark` INTEGER NOT NULL, `comment` TEXT NOT NULL, `date` INTEGER NOT NULL, FOREIGN KEY (`saler_id`) REFERENCES `Saler` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `saler_review` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `saler_id` INTEGER NOT NULL, `mark` INTEGER NOT NULL, `comment` TEXT NOT NULL, `date` INTEGER NOT NULL, FOREIGN KEY (`saler_id`) REFERENCES `Saler` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -267,22 +267,22 @@ class _$SalerReviewDao extends SalerReviewDao {
   Future<List<SalerReview>> findAllSalerReviews() async {
     return _queryAdapter.queryList('SELECT * FROM saler_review',
         mapper: (Map<String, Object?> row) => SalerReview(
-            row['id'] as int,
-            row['saler_id'] as int,
-            row['mark'] as int,
-            row['comment'] as String,
-            row['date'] as int));
+            id: row['id'] as int?,
+            salerId: row['saler_id'] as int,
+            mark: row['mark'] as int,
+            comment: row['comment'] as String,
+            date: row['date'] as int));
   }
 
   @override
   Future<SalerReview?> findSalerReviewById(int id) async {
     return _queryAdapter.query('SELECT * FROM saler_review WHERE id = ?1',
         mapper: (Map<String, Object?> row) => SalerReview(
-            row['id'] as int,
-            row['saler_id'] as int,
-            row['mark'] as int,
-            row['comment'] as String,
-            row['date'] as int),
+            id: row['id'] as int?,
+            salerId: row['saler_id'] as int,
+            mark: row['mark'] as int,
+            comment: row['comment'] as String,
+            date: row['date'] as int),
         arguments: [id]);
   }
 

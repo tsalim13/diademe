@@ -1,5 +1,4 @@
 import 'package:diademe/Bloc/Database/database_bloc.dart';
-import 'package:diademe/Bloc/Database/database_event.dart';
 import 'package:diademe/Bloc/Database/database_state.dart';
 import 'package:diademe/pages/home.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'Locale/language_cubit.dart';
 import 'Locale/locales.dart';
 
-import 'Locale/language_page.dart';
 import 'Theme/style.dart';
 
 void main() async {
