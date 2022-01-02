@@ -10,6 +10,7 @@ import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class Statistics extends StatefulWidget {
   @override
@@ -31,6 +32,14 @@ class _StatisticsState extends State<Statistics> {
 
   DatePeriod? _selectedPeriodRange;
 
+   dynamic _date;
+  dynamic _controller;
+  PickerDateRange? _range;
+  
+
+  late ButtonStyle style;
+  late dp.DatePickerRangeStyles styles;
+
   @override
   void initState() {
     _databaseState =
@@ -40,7 +49,7 @@ class _StatisticsState extends State<Statistics> {
   }
 
   Future<void> fetchSalers() async {
-    _salers = await _databaseState.salerDao.findAllSalers();
+    _salers = await _databaseState.salerDao.findAllActifSalers();
     setState(() {
       isLoading = false;
     });
@@ -69,13 +78,17 @@ class _StatisticsState extends State<Statistics> {
     Navigator.pop(context);
   }
 
-  void _onSelectedDateChangedRange(DatePeriod newPeriod) {
-    setState(() {
-      _selectedPeriodRange = newPeriod;
-      _selectedDate = null;
-      _selectedPeriodWeek = null;
-    });
-  }
+  // void _onSelectedDateChangedRange(DatePeriod newPeriod) {
+  //   setState(() {
+  //     _selectedPeriodRange = newPeriod;
+  //     _selectedDate = null;
+  //     _selectedPeriodWeek = null;
+  //   });
+  //   Navigator.pop(context);
+  //   //showRangedatePicker();
+  // }
+
+
 
   String _dayHeaderTitleBuilder(
           int dayOfTheWeek, List<String> localizedHeaders) =>
@@ -83,13 +96,13 @@ class _StatisticsState extends State<Statistics> {
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle style = ElevatedButton.styleFrom(
+    style = ElevatedButton.styleFrom(
         textStyle: const TextStyle(fontSize: 20),
         elevation: 15,
         primary: Theme.of(context).primaryColor.withOpacity(0.7),
         onPrimary: Colors.black);
 
-    dp.DatePickerRangeStyles styles = dp.DatePickerRangeStyles(
+    styles = dp.DatePickerRangeStyles(
       selectedDateStyle: Theme.of(context).accentTextTheme.bodyText1,
       selectedSingleDateDecoration: BoxDecoration(
           color: Theme.of(context).primaryColor, shape: BoxShape.circle),
@@ -122,85 +135,93 @@ class _StatisticsState extends State<Statistics> {
         centerTitle: true,
       ),
       body: FadedSlideAnimation(
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child:
-                  MultiSelectChipField<Saler?>(
-                    height: 90,
-                    items: _salers
-                        .map((saler) =>
-                            MultiSelectItem<Saler?>(saler, saler.name))
-                        .toList(),
-                    itemBuilder: (item, state) {
-                      // return your custom widget here
-                      return InkWell(
-                        onTap: () {
-                          _selectedSalers.contains(item.value)
-                              ? _selectedSalers.remove(item.value)
-                              : _selectedSalers.add(item.value);
-                          state.didChange(_selectedSalers);
-                        },
-                        child: Column(
-                          children: [
-                            Stack(
-                              children: [
-                                Container(
-                                  width: 70,
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: Container(
-                                      child: Card(
-                                        elevation: 1.0,
-                                        shape: RoundedRectangleBorder(
+        isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: MultiSelectChipField<Saler?>(
+                      height: 130,
+                      items: _salers
+                          .map((saler) =>
+                              MultiSelectItem<Saler?>(saler, saler.name))
+                          .toList(),
+                      itemBuilder: (item, state) {
+                        // return your custom widget here
+                        return InkWell(
+                          onTap: () {
+                            _selectedSalers.contains(item.value)
+                                ? _selectedSalers.remove(item.value)
+                                : _selectedSalers.add(item.value);
+                            state.didChange(_selectedSalers);
+                          },
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    width: 70,
+                                    child: AspectRatio(
+                                      aspectRatio: 1,
+                                      child: Container(
+                                        child: Card(
+                                          elevation: 1.0,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(300),
+                                              side: BorderSide(
+                                                  width: 1,
+                                                  color: Theme.of(context)
+                                                      .primaryColor)),
+                                          child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(300),
-                                            side: BorderSide(
-                                                width: 1,
-                                                color: Theme.of(context)
-                                                    .primaryColor)),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(300),
-                                          child: Image.file(
-                                            File(_databaseState.path +
-                                                '/' +
-                                                item.value!.image),
-                                            fit: BoxFit.fill,
-                                            alignment: Alignment.center,
+                                            child: Image.file(
+                                              File(_databaseState.path +
+                                                  '/' +
+                                                  item.value!.image),
+                                              fit: BoxFit.fill,
+                                              alignment: Alignment.center,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.white54,
-                                            blurRadius: 5.0,
-                                            offset: Offset(0, 15),
-                                            spreadRadius: 0.5,
-                                          ),
-                                        ],
-                                        borderRadius: BorderRadius.circular(300),
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.white54,
+                                              blurRadius: 5.0,
+                                              offset: Offset(0, 15),
+                                              spreadRadius: 0.5,
+                                            ),
+                                          ],
+                                          borderRadius:
+                                              BorderRadius.circular(300),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                if(_selectedSalers.contains(item.value))
-                                Container(
-                                  height: 70,
-                                  width: 70,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(300),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),),
+                                  if (_selectedSalers.contains(item.value))
+                                    Container(
+                                      height: 70,
+                                      width: 70,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.5),
+                                        borderRadius:
+                                            BorderRadius.circular(300),
+                                      ),
+                                    )
+                                ],
+                              ),
+                              Text(item.value!.name)
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                   // Expanded(
                   //   child: MultiSelectDialogField(
                   //     searchable: true,
@@ -233,103 +254,153 @@ class _StatisticsState extends State<Statistics> {
                   //   ),
                   // ),
 
-Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 15),
-                  ElevatedButton(
-                      style: style,
-                      onPressed: () {
-                        showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) => SimpleDialog(
-                                  title: const Text('Mensuelle'),
-                                  children: [
-                                    dp.MonthPicker.single(
-                                      selectedDate:
-                                          _selectedDate ?? DateTime.now(),
-                                      onChanged: _onSelectedDateChangedMonth,
-                                      firstDate: _firstDate,
-                                      lastDate: _selectedDate != null &&
-                                              _selectedDate!.isAfter(_lastDate)
-                                          ? _selectedDate!
-                                          : _lastDate,
-                                      datePickerStyles: styles,
-                                    ),
-                                  ],
-                                ));
-                      },
-                      child: Text(_selectedDate != null
-                          ? DateFormat.yMMMM('fr_FR').format(_selectedDate!)
-                          : "Mensuelle")),
-                  SizedBox(width: 15),
-                  ElevatedButton(
-                      style: style,
-                      onPressed: () {
-                        showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) => SimpleDialog(
-                                  title: const Text('Hebdomadaire'),
-                                  children: [
-                                    WeekPicker(
-                                      selectedDate: _selectedPeriodWeek != null
-                                          ? _selectedPeriodWeek!.start
-                                          : DateTime.now(),
-                                      onChanged: _onSelectedDateChangedWeek,
-                                      firstDate: _firstDate,
-                                      lastDate: _lastDate,
-                                      datePickerStyles: styles,
-                                      //selectableDayPredicate: _isSelectableCustomWeek,
-                                    ),
-                                  ],
-                                ));
-                      },
-                      child: Text(_selectedPeriodWeek != null
-                          ? DateFormat.yMMMd('fr_FR')
-                                  .format(_selectedPeriodWeek!.start) +
-                              ' - ' +
-                              DateFormat.yMMMd('fr_FR')
-                                  .format(_selectedPeriodWeek!.end)
-                          : "Hebdomadaire")),
-                  SizedBox(width: 15),
-                  ElevatedButton(
-                      style: style,
-                      onPressed: () {
-                        showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) => SimpleDialog(
-                                  title: const Text('Personnalisé'),
-                                  children: [
-                                    RangePicker(
-                                      selectedPeriod: _selectedPeriodRange ??
-                                          DatePeriod(
-                                              DateTime.now(), DateTime.now()),
-                                      onChanged: _onSelectedDateChangedRange,
-                                      firstDate: _firstDate,
-                                      lastDate: _lastDate,
-                                      datePickerStyles: styles,
-                                    ),
-                                  ],
-                                ));
-                      },
-                      child: Text(_selectedPeriodRange != null
-                          ? DateFormat.yMMMd('fr_FR')
-                                  .format(_selectedPeriodRange!.start) +
-                              ' - ' +
-                              DateFormat.yMMMd('fr_FR')
-                                  .format(_selectedPeriodRange!.end)
-                          : "Personnalisé")),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 15),
+                        ElevatedButton(
+                            style: style,
+                            onPressed: () {
+                              showDialog<void>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      SimpleDialog(
+                                        children: [
+                                          FittedBox(
+                                            child: dp.MonthPicker.single(
+                                              selectedDate: _selectedDate ??
+                                                  DateTime.now(),
+                                              onChanged:
+                                                  _onSelectedDateChangedMonth,
+                                              firstDate: _firstDate,
+                                              lastDate: _selectedDate != null &&
+                                                      _selectedDate!
+                                                          .isAfter(_lastDate)
+                                                  ? _selectedDate!
+                                                  : _lastDate,
+                                              datePickerStyles: styles,
+                                            ),
+                                          ),
+                                        ],
+                                      ));
+                            },
+                            child: Text(_selectedDate != null
+                                ? DateFormat.yMMMM('fr_FR')
+                                    .format(_selectedDate!)
+                                : "Mensuelle")),
+                        SizedBox(width: 15),
+                        ElevatedButton(
+                            style: style,
+                            onPressed: () {
+                              showDialog<void>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      SimpleDialog(
+                                        children: [
+                                          FittedBox(
+                                            child: WeekPicker(
+                                              selectedDate:
+                                                  _selectedPeriodWeek != null
+                                                      ? _selectedPeriodWeek!
+                                                          .start
+                                                      : DateTime.now(),
+                                              onChanged:
+                                                  _onSelectedDateChangedWeek,
+                                              firstDate: _firstDate,
+                                              lastDate: _lastDate,
+                                              datePickerStyles: styles,
+                                              //selectableDayPredicate: _isSelectableCustomWeek,
+                                            ),
+                                          ),
+                                        ],
+                                      ));
+                            },
+                            child: Text(_selectedPeriodWeek != null
+                                ? DateFormat.yMMMd('fr_FR')
+                                        .format(_selectedPeriodWeek!.start) +
+                                    ' - ' +
+                                    DateFormat.yMMMd('fr_FR')
+                                        .format(_selectedPeriodWeek!.end)
+                                : "Hebdomadaire")),
+                        SizedBox(width: 15),
+                        ElevatedButton(
+                            style: style,
+                            onPressed: () {
+                              showRangedatePicker();
+                              // showDateRangePicker(
+                              //   context: context,
+                              //   firstDate: _firstDate,
+                              //   lastDate: _lastDate,
+                              //   locale: Locale('pt', 'BR')
+                              // );
+
+                            },
+                            child: Text(_range != null
+                                ? DateFormat.yMMMd('fr_FR')
+                                        .format(_range!.startDate!) +
+                                    ' - ' +
+                                    DateFormat.yMMMd('fr_FR')
+                                        .format(_range!.endDate!)
+                                : "Personnalisé")),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
         beginOffset: Offset(0.0, 0.3),
         endOffset: Offset(0, 0),
         slideCurve: Curves.linearToEaseOut,
       ),
     );
+  }
+
+  void showRangedatePicker() {
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => SimpleDialog(
+          insetPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+              children: [
+                Container(
+                  width: 450,
+                  child: SfDateRangePicker(
+                    minDate: _firstDate,
+                    maxDate: _lastDate,
+                    showTodayButton: true,
+                    showActionButtons: true,
+                    selectionMode: DateRangePickerSelectionMode.range,
+                    confirmText: "Confirmer",
+                    cancelText: "Annuler",
+                    initialSelectedRange: _range,
+                    onSubmit: (Object? value){
+                      PickerDateRange _r = value as PickerDateRange;
+                      if(_r.startDate != null && _r.endDate != null) {
+                      setState(() {
+                        _range = _r;
+                      });
+                      Navigator.pop(context);
+                      }
+                    },
+                    onCancel: () {
+                      // setState(() {
+                      //   _range = null;
+                      // });
+                      Navigator.pop(context);
+                    },
+                  ))
+                //FittedBox(
+                  // child: RangePicker(
+                  //   selectedPeriod: _selectedPeriodRange ??
+                  //       DatePeriod(DateTime.now(), DateTime.now()),
+                  //   onChanged: _onSelectedDateChangedRange,
+                  //   firstDate: _firstDate,
+                  //   lastDate: _lastDate,
+                  //   datePickerStyles: styles,
+                  // ),
+                //),
+              ],
+            ));
   }
 }

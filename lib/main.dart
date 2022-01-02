@@ -35,9 +35,7 @@ class DiademeFeedback extends StatelessWidget {
           create: (context) => DatabaseBloc(),
         ),
       ],
-      child: BlocBuilder<LanguageCubit, Locale>(
-        builder: (_, locale) {
-          return BlocBuilder<DatabaseBloc, DatabaseState>(
+      child: BlocBuilder<DatabaseBloc, DatabaseState>(
             builder: (context, state) {
               return MaterialApp(
                 localizationsDelegates: [
@@ -47,21 +45,20 @@ class DiademeFeedback extends StatelessWidget {
                 ],
                 supportedLocales: [
                   //const Locale('en'),
-                  // const Locale('pt'),
+                  const Locale('pt'),
                   const Locale('fr'),
                   // const Locale('id'),
-                  //const Locale('ar'),
+                  const Locale('ar'),
                   // const Locale('es'),
                   // const Locale('it'),
                   // const Locale('tr'),
                   // const Locale('sw'),
                 ],
-                locale: locale,
+                locale: Locale('fr'),
                 theme: appTheme,
                 home: HomePage(),
               );
-            },
-          );
+            
         },
       ),
     );

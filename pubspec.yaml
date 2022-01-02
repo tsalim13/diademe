@@ -42,6 +42,7 @@ dependencies:
   path_provider: ^2.0.4
   flutter_rating_bar: ^4.0.0
   multi_select_flutter: ^4.0.0
+  syncfusion_flutter_datepicker: ^19.4.40
 
 dev_dependencies:
   floor_generator: ^1.1.0
