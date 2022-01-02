@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:diademe/Locale/locales.dart';
 import 'package:diademe/pages/login.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomePage extends StatefulWidget {
   @override

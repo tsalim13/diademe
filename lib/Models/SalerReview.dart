@@ -8,6 +8,7 @@ import 'package:floor/floor.dart';
       childColumns: ['saler_id'],
       parentColumns: ['id'],
       entity: Saler,
+      onDelete: ForeignKeyAction.cascade
     )
   ],
 )

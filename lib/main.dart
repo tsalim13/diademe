@@ -46,11 +46,11 @@ class DiademeFeedback extends StatelessWidget {
                   GlobalWidgetsLocalizations.delegate,
                 ],
                 supportedLocales: [
-                  const Locale('en'),
+                  //const Locale('en'),
                   // const Locale('pt'),
                   const Locale('fr'),
                   // const Locale('id'),
-                  const Locale('ar'),
+                  //const Locale('ar'),
                   // const Locale('es'),
                   // const Locale('it'),
                   // const Locale('tr'),

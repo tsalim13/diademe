@@ -346,6 +346,7 @@ class _ReviewPageState extends State<ReviewPage> {
                                                                   .text,
                                                           date: DateTime.now()
                                                               .millisecondsSinceEpoch));
+                                                  Navigator.pop(context);
                                                   Navigator.pushReplacement(
                                                       context,
                                                       MaterialPageRoute(
