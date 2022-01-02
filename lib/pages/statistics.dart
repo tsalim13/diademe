@@ -4,13 +4,15 @@ import 'package:animation_wrappers/animation_wrappers.dart';
 import 'package:diademe/Bloc/Database/database_bloc.dart';
 import 'package:diademe/Bloc/Database/database_state.dart';
 import 'package:diademe/Models/Saler.dart';
+import 'package:diademe/Models/SalerReview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import "package:collection/collection.dart";
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class Statistics extends StatefulWidget {
   @override
@@ -24,6 +26,10 @@ class _StatisticsState extends State<Statistics> {
   List<Saler?> _selectedSalers = [];
   bool isLoading = true;
 
+  List<SalerReview> _salersReviews = [];
+
+  Map<int, List<SalerReview>> _salersReviewsMap = {};
+
   DateTime? _selectedDate;
   DateTime _firstDate = DateTime(2020);
   DateTime _lastDate = DateTime.now().add(Duration(days: 1));
@@ -35,22 +41,64 @@ class _StatisticsState extends State<Statistics> {
    dynamic _date;
   dynamic _controller;
   PickerDateRange? _range;
+
+
+
+  List<charts.Series<dynamic, String>> seriesList = [];
   
 
   late ButtonStyle style;
-  late dp.DatePickerRangeStyles styles;
 
   @override
   void initState() {
     _databaseState =
         BlocProvider.of<DatabaseBloc>(context).state as LoadedDatabaseState;
     fetchSalers();
+    fetchSalersReviews();
     super.initState();
   }
 
   Future<void> fetchSalers() async {
     _salers = await _databaseState.salerDao.findAllActifSalers();
     setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> fetchSalersReviews() async {
+    _salersReviews = await _databaseState.salerReviewDao.findAllSalerReviews();
+    setState(() {
+      _salersReviewsMap = groupBy(_salersReviews, (SalerReview review) => review.salerId);
+
+      List<ChartReview> reviewsNbr = [
+        
+      ];
+
+      List<ChartReview> averageReview = [
+        
+      ];
+
+      _salersReviewsMap.forEach((key, value) {
+        reviewsNbr.add(ChartReview(_salers.firstWhere((element) => element.id == key).name, nbr: value.length));
+        var sum = value.map((sr) => sr.mark).reduce((value, element) => value+element);
+        averageReview.add(ChartReview(_salers.firstWhere((element) => element.id == key).name, average: double.parse((sum / value.length).toStringAsFixed(2)) ));
+       });
+
+       seriesList.add(new charts.Series<ChartReview, String>(
+        id: 'Nombre de notes',
+        domainFn: (ChartReview rvws, _) => rvws.salerName,
+        measureFn: (ChartReview rvws, _) => rvws.nbr!,
+        data: reviewsNbr,
+      ),);
+
+      seriesList.add(new charts.Series<ChartReview, String>(
+        id: 'Note moyenne',
+        domainFn: (ChartReview rvws, _) => rvws.salerName,
+        measureFn: (ChartReview rvws, _) => rvws.average!,
+        data: averageReview,
+      ),);
+
+
       isLoading = false;
     });
   }
@@ -102,25 +150,6 @@ class _StatisticsState extends State<Statistics> {
         primary: Theme.of(context).primaryColor.withOpacity(0.7),
         onPrimary: Colors.black);
 
-    styles = dp.DatePickerRangeStyles(
-      selectedDateStyle: Theme.of(context).accentTextTheme.bodyText1,
-      selectedSingleDateDecoration: BoxDecoration(
-          color: Theme.of(context).primaryColor, shape: BoxShape.circle),
-      dayHeaderStyle: DayHeaderStyle(textStyle: TextStyle(color: Colors.red)),
-      dayHeaderTitleBuilder: _dayHeaderTitleBuilder,
-      selectedPeriodLastDecoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadiusDirectional.only(
-              topEnd: Radius.circular(10.0), bottomEnd: Radius.circular(10.0))),
-      selectedPeriodStartDecoration: BoxDecoration(
-        color: Colors.green,
-        borderRadius: BorderRadiusDirectional.only(
-            topStart: Radius.circular(10.0),
-            bottomStart: Radius.circular(10.0)),
-      ),
-      selectedPeriodMiddleDecoration: BoxDecoration(
-          color: Theme.of(context).primaryColor, shape: BoxShape.rectangle),
-    );
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -137,218 +166,179 @@ class _StatisticsState extends State<Statistics> {
       body: FadedSlideAnimation(
         isLoading
             ? Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: MultiSelectChipField<Saler?>(
-                      height: 130,
-                      items: _salers
-                          .map((saler) =>
-                              MultiSelectItem<Saler?>(saler, saler.name))
-                          .toList(),
-                      itemBuilder: (item, state) {
-                        // return your custom widget here
-                        return InkWell(
-                          onTap: () {
-                            _selectedSalers.contains(item.value)
-                                ? _selectedSalers.remove(item.value)
-                                : _selectedSalers.add(item.value);
-                            state.didChange(_selectedSalers);
-                          },
-                          child: Column(
-                            children: [
-                              Stack(
+            : SingleChildScrollView(
+              child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: MultiSelectChipField<Saler?>(
+                        height: 130,
+                        items: _salers
+                            .map((saler) =>
+                                MultiSelectItem<Saler?>(saler, saler.name))
+                            .toList(),
+                        itemBuilder: (item, state) {
+                          // return your custom widget here
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                _selectedSalers.contains(item.value)
+                                    ? _selectedSalers.remove(item.value)
+                                    : _selectedSalers.add(item.value);
+                                state.didChange(_selectedSalers);
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    width: 70,
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: Container(
-                                        child: Card(
-                                          elevation: 1.0,
-                                          shape: RoundedRectangleBorder(
+                                  Stack(
+                                    alignment: AlignmentDirectional.center,
+                                    children: [
+                                      Container(
+                                        width: 75,
+                                        child: AspectRatio(
+                                          aspectRatio: 1,
+                                          child: Container(
+                                            child: Card(
+                                              elevation: 1.0,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(300),
+                                                  side: BorderSide(
+                                                      width: 1,
+                                                      color: Theme.of(context)
+                                                          .primaryColor)),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(300),
+                                                child: Image.file(
+                                                  File(_databaseState.path +
+                                                      '/' +
+                                                      item.value!.image),
+                                                  fit: BoxFit.fill,
+                                                  alignment: Alignment.center,
+                                                ),
+                                              ),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.white54,
+                                                  blurRadius: 5.0,
+                                                  offset: Offset(0, 15),
+                                                  spreadRadius: 0.5,
+                                                ),
+                                              ],
                                               borderRadius:
                                                   BorderRadius.circular(300),
-                                              side: BorderSide(
-                                                  width: 1,
-                                                  color: Theme.of(context)
-                                                      .primaryColor)),
-                                          child: ClipRRect(
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      if (_selectedSalers.contains(item.value))
+                                        Container(
+                                          height: 73,
+                                          width: 73,
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                .primaryColor
+                                                .withOpacity(0.5),
                                             borderRadius:
                                                 BorderRadius.circular(300),
-                                            child: Image.file(
-                                              File(_databaseState.path +
-                                                  '/' +
-                                                  item.value!.image),
-                                              fit: BoxFit.fill,
-                                              alignment: Alignment.center,
-                                            ),
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.white54,
-                                              blurRadius: 5.0,
-                                              offset: Offset(0, 15),
-                                              spreadRadius: 0.5,
-                                            ),
-                                          ],
-                                          borderRadius:
-                                              BorderRadius.circular(300),
-                                        ),
-                                      ),
-                                    ),
+                                        )
+                                    ],
                                   ),
-                                  if (_selectedSalers.contains(item.value))
-                                    Container(
-                                      height: 70,
-                                      width: 70,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .primaryColor
-                                            .withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(300),
-                                      ),
-                                    )
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: 80,
+                                    child: Text(item.value!.name, style: Theme.of(context).textTheme.bodyText1, textAlign: TextAlign.center)
+                                  )
                                 ],
                               ),
-                              Text(item.value!.name)
-                            ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    // Expanded(
+                    //   child: MultiSelectDialogField(
+                    //     searchable: true,
+                    //     items: _salers
+                    //         .map(
+                    //             (saler) => MultiSelectItem<Saler?>(saler, saler.name))
+                    //         .toList(),
+                    //     title: Text("Vendeurs"),
+                    //     selectedColor: Theme.of(context).primaryColor,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.all(Radius.circular(5)),
+                    //       border: Border.all(
+                    //         color: Theme.of(context).primaryColor,
+                    //         width: 2,
+                    //       ),
+                    //     ),
+                    //     buttonIcon: Icon(
+                    //       Icons.people,
+                    //       color: Theme.of(context).primaryColor,
+                    //     ),
+                    //     buttonText: Text(
+                    //       "Liste des vendeurs",
+                    //       style: TextStyle(
+                    //         fontSize: 16,
+                    //       ),
+                    //     ),
+                    //     onConfirm: (results) {
+                    //       _selectedSalers = results as List<Saler?>;
+                    //     },
+                    //   ),
+                    // ),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ElevatedButton(
+                              style: style,
+                              onPressed: () {
+                                showRangedatePicker();
+                                // showDateRangePicker(
+                                //   context: context,
+                                //   firstDate: _firstDate,
+                                //   lastDate: _lastDate,
+                                //   locale: Locale('pt', 'BR')
+                                // );
+
+                              },
+                              child: Text(_range != null
+                                  ? DateFormat.yMMMd('fr_FR')
+                                          .format(_range!.startDate!) +
+                                      ' - ' +
+                                      DateFormat.yMMMd('fr_FR')
+                                          .format(_range!.endDate!)
+                                  : "Personnalisé")),
+
+
+
+                          Container(
+                            width: 500,
+                            height: 500,
+                            child: charts.BarChart(
+                              seriesList,
+                              animate: true,
+                              barGroupingType: charts.BarGroupingType.grouped,
+                              behaviors: [new charts.SeriesLegend()],
+                            ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  // Expanded(
-                  //   child: MultiSelectDialogField(
-                  //     searchable: true,
-                  //     items: _salers
-                  //         .map(
-                  //             (saler) => MultiSelectItem<Saler?>(saler, saler.name))
-                  //         .toList(),
-                  //     title: Text("Vendeurs"),
-                  //     selectedColor: Theme.of(context).primaryColor,
-                  //     decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.all(Radius.circular(5)),
-                  //       border: Border.all(
-                  //         color: Theme.of(context).primaryColor,
-                  //         width: 2,
-                  //       ),
-                  //     ),
-                  //     buttonIcon: Icon(
-                  //       Icons.people,
-                  //       color: Theme.of(context).primaryColor,
-                  //     ),
-                  //     buttonText: Text(
-                  //       "Liste des vendeurs",
-                  //       style: TextStyle(
-                  //         fontSize: 16,
-                  //       ),
-                  //     ),
-                  //     onConfirm: (results) {
-                  //       _selectedSalers = results as List<Saler?>;
-                  //     },
-                  //   ),
-                  // ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(width: 15),
-                        ElevatedButton(
-                            style: style,
-                            onPressed: () {
-                              showDialog<void>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      SimpleDialog(
-                                        children: [
-                                          FittedBox(
-                                            child: dp.MonthPicker.single(
-                                              selectedDate: _selectedDate ??
-                                                  DateTime.now(),
-                                              onChanged:
-                                                  _onSelectedDateChangedMonth,
-                                              firstDate: _firstDate,
-                                              lastDate: _selectedDate != null &&
-                                                      _selectedDate!
-                                                          .isAfter(_lastDate)
-                                                  ? _selectedDate!
-                                                  : _lastDate,
-                                              datePickerStyles: styles,
-                                            ),
-                                          ),
-                                        ],
-                                      ));
-                            },
-                            child: Text(_selectedDate != null
-                                ? DateFormat.yMMMM('fr_FR')
-                                    .format(_selectedDate!)
-                                : "Mensuelle")),
-                        SizedBox(width: 15),
-                        ElevatedButton(
-                            style: style,
-                            onPressed: () {
-                              showDialog<void>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      SimpleDialog(
-                                        children: [
-                                          FittedBox(
-                                            child: WeekPicker(
-                                              selectedDate:
-                                                  _selectedPeriodWeek != null
-                                                      ? _selectedPeriodWeek!
-                                                          .start
-                                                      : DateTime.now(),
-                                              onChanged:
-                                                  _onSelectedDateChangedWeek,
-                                              firstDate: _firstDate,
-                                              lastDate: _lastDate,
-                                              datePickerStyles: styles,
-                                              //selectableDayPredicate: _isSelectableCustomWeek,
-                                            ),
-                                          ),
-                                        ],
-                                      ));
-                            },
-                            child: Text(_selectedPeriodWeek != null
-                                ? DateFormat.yMMMd('fr_FR')
-                                        .format(_selectedPeriodWeek!.start) +
-                                    ' - ' +
-                                    DateFormat.yMMMd('fr_FR')
-                                        .format(_selectedPeriodWeek!.end)
-                                : "Hebdomadaire")),
-                        SizedBox(width: 15),
-                        ElevatedButton(
-                            style: style,
-                            onPressed: () {
-                              showRangedatePicker();
-                              // showDateRangePicker(
-                              //   context: context,
-                              //   firstDate: _firstDate,
-                              //   lastDate: _lastDate,
-                              //   locale: Locale('pt', 'BR')
-                              // );
 
-                            },
-                            child: Text(_range != null
-                                ? DateFormat.yMMMd('fr_FR')
-                                        .format(_range!.startDate!) +
-                                    ' - ' +
-                                    DateFormat.yMMMd('fr_FR')
-                                        .format(_range!.endDate!)
-                                : "Personnalisé")),
-                      ],
+
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+            ),
         beginOffset: Offset(0.0, 0.3),
         endOffset: Offset(0, 0),
         slideCurve: Curves.linearToEaseOut,
@@ -375,7 +365,7 @@ class _StatisticsState extends State<Statistics> {
                     cancelText: "Annuler",
                     initialSelectedRange: _range,
                     onSubmit: (Object? value){
-                      PickerDateRange _r = value as PickerDateRange;
+                      PickerDateRange? _r = value != null ? value as PickerDateRange : PickerDateRange(null,null);
                       if(_r.startDate != null && _r.endDate != null) {
                       setState(() {
                         _range = _r;
@@ -403,4 +393,13 @@ class _StatisticsState extends State<Statistics> {
               ],
             ));
   }
+}
+
+
+class ChartReview {
+  final String salerName;
+  final int? nbr;
+  final double? average;
+
+  ChartReview(this.salerName, {this.nbr, this.average});
 }
