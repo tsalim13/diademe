@@ -8,6 +8,9 @@ abstract class SalerReviewDao {
 
   @Query('SELECT * FROM saler_review WHERE id = :id')
   Future<SalerReview?> findSalerReviewById(int id);
+
+  @Query('SELECT * FROM saler_review WHERE saler_id IN (:ids) AND date BETWEEN :start AND :end')
+  Future<List<SalerReview>> findSalerReviewBySalerIdDateRange(List<int> ids, int start, int end);
   //stream
 
   @insert
