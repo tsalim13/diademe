@@ -307,6 +307,25 @@ class _$SalerReviewDao extends SalerReviewDao {
   }
 
   @override
+  Future<List<SalerReview>> findSalerReviewBySalerId(List<int> ids) async {
+    const offset = 1;
+    final _sqliteVariablesForIds =
+        Iterable<String>.generate(ids.length, (i) => '?${i + offset}')
+            .join(',');
+    return _queryAdapter.queryList(
+        'SELECT * FROM saler_review WHERE saler_id IN (' +
+            _sqliteVariablesForIds +
+            ')',
+        mapper: (Map<String, Object?> row) => SalerReview(
+            id: row['id'] as int?,
+            salerId: row['saler_id'] as int,
+            mark: row['mark'] as int,
+            comment: row['comment'] as String,
+            date: row['date'] as int),
+        arguments: [...ids]);
+  }
+
+  @override
   Future<void> insertSalerReview(SalerReview salerReview) async {
     await _salerReviewInsertionAdapter.insert(
         salerReview, OnConflictStrategy.abort);

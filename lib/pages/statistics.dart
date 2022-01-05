@@ -76,7 +76,7 @@ class _StatisticsState extends State<Statistics> {
         isLoading
             ? Center(child: CircularProgressIndicator())
             : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -174,41 +174,12 @@ class _StatisticsState extends State<Statistics> {
                           );
                         },
                       ),
-                      // Expanded(
-                      //   child: MultiSelectDialogField(
-                      //     searchable: true,
-                      //     items: _salers
-                      //         .map(
-                      //             (saler) => MultiSelectItem<Saler?>(saler, saler.name))
-                      //         .toList(),
-                      //     title: Text("Vendeurs"),
-                      //     selectedColor: Theme.of(context).primaryColor,
-                      //     decoration: BoxDecoration(
-                      //       borderRadius: BorderRadius.all(Radius.circular(5)),
-                      //       border: Border.all(
-                      //         color: Theme.of(context).primaryColor,
-                      //         width: 2,
-                      //       ),
-                      //     ),
-                      //     buttonIcon: Icon(
-                      //       Icons.people,
-                      //       color: Theme.of(context).primaryColor,
-                      //     ),
-                      //     buttonText: Text(
-                      //       "Liste des vendeurs",
-                      //       style: TextStyle(
-                      //         fontSize: 16,
-                      //       ),
-                      //     ),
-                      //     onConfirm: (results) {
-                      //       _selectedSalers = results as List<Saler?>;
-                      //     },
-                      //   ),
-                      // ),
-
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          Text("Intervalle de temps: ",
+                              style: TextStyle(fontSize: 20)),
+                          SizedBox(width: 15),
                           ElevatedButton(
                               style: style,
                               onPressed: () {
@@ -221,39 +192,47 @@ class _StatisticsState extends State<Statistics> {
                                       DateFormat.yMMMd('fr_FR')
                                           .format(_range!.endDate!)
                                   : "Personnalisé")),
+                          SizedBox(width: 8),
                           ElevatedButton(
                               style: style,
                               onPressed: () {
-                                if (_range != null &&
-                                    _selectedSalers.isNotEmpty) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Chart(
-                                              selectedSalers: _selectedSalers,
-                                              range: _range!,
-                                              isGlobal: true,)));
-                                }
+                                setState(() {
+                                  _range = null;
+                                });
                               },
-                              child: Text("Recherche globale")),
-
-                              ElevatedButton(
-                              style: style,
-                              onPressed: () {
-                                if (_range != null &&
-                                    _selectedSalers.isNotEmpty) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Chart(
-                                              selectedSalers: _selectedSalers,
-                                              range: _range!,
-                                              isGlobal: false,)));
-                                }
-                              },
-                              child: Text("Recherche detaillé")),
+                              child: Icon(Icons.delete_outline)),
                         ],
                       ),
+                      ElevatedButton(
+                          style: style,
+                          onPressed: () {
+                            if (_selectedSalers.isNotEmpty) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Chart(
+                                            selectedSalers: _selectedSalers,
+                                            range: _range,
+                                            isGlobal: true,
+                                          )));
+                            }
+                          },
+                          child: Text("Recherche globale")),
+                      ElevatedButton(
+                          style: style,
+                          onPressed: () {
+                            if (_selectedSalers.isNotEmpty) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Chart(
+                                            selectedSalers: _selectedSalers,
+                                            range: _range,
+                                            isGlobal: false,
+                                          )));
+                            }
+                          },
+                          child: Text("Recherche detaillé")),
                     ],
                   ),
                 ),
@@ -275,6 +254,10 @@ class _StatisticsState extends State<Statistics> {
                 Container(
                     width: 450,
                     child: SfDateRangePicker(
+                      startRangeSelectionColor: Colors.amber,
+                      endRangeSelectionColor: Colors.amber,
+                      rangeSelectionColor: Colors.amber.withOpacity(0.5),
+                      selectionTextStyle: TextStyle(color: Colors.black),
                       minDate: _firstDate,
                       maxDate: _lastDate,
                       showTodayButton: true,

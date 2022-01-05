@@ -13,7 +13,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 
 class Chart extends StatefulWidget {
   final List<Saler?> selectedSalers;
-  final PickerDateRange range;
+  final PickerDateRange? range;
   final bool isGlobal;
 
   const Chart(
@@ -66,12 +66,17 @@ class _ChartState extends State<Chart> {
     List<int> selectedSalersIds = [];
     selectedSalersIds = widget.selectedSalers.map((e) => e!.id!).toList();
 
-    int start = widget.range.startDate!.millisecondsSinceEpoch;
-    int end = widget.range.endDate!.millisecondsSinceEpoch +
-        Duration(hours: 23, minutes: 59, seconds: 59).inMilliseconds;
+    if (widget.range != null) {
+      int start = widget.range!.startDate!.millisecondsSinceEpoch;
+      int end = widget.range!.endDate!.millisecondsSinceEpoch +
+          Duration(hours: 23, minutes: 59, seconds: 59).inMilliseconds;
 
-    _salersReviews = await _databaseState.salerReviewDao
-        .findSalerReviewBySalerIdDateRange(selectedSalersIds, start, end);
+      _salersReviews = await _databaseState.salerReviewDao
+          .findSalerReviewBySalerIdDateRange(selectedSalersIds, start, end);
+    } else {
+      _salersReviews = await _databaseState.salerReviewDao
+          .findSalerReviewBySalerId(selectedSalersIds);
+    }
 
     List<SalerReviewWithDateTime> salerReviewWithDateTime = [];
     salerReviewWithDateTime = _salersReviews
@@ -105,52 +110,13 @@ class _ChartState extends State<Chart> {
         });
 
         seriesListDatetime.add(charts.Series<DateTimeChartReview, DateTime>(
-          id: "Note moyenne " +_salers.firstWhere((element) => element.id == salerId).name,
+          id: "Note moyenne " +
+              _salers.firstWhere((element) => element.id == salerId).name,
           domainFn: (DateTimeChartReview rvws, _) => rvws.datetime,
           measureFn: (DateTimeChartReview rvws, _) => rvws.average,
           data: reviews,
         ));
       });
-
-      //   var sum = value
-      //       .map((sr) => sr.mark)
-      //       .reduce((value, element) => value + element);
-      //   int nbrComment =
-      //       value.where((element) => element.comment.isNotEmpty).length;
-      //   reviews.add(ChartReview(
-      //       _salers.firstWhere((element) => element.id == key).name,
-      //       nbr: value.length,
-      //       average: double.parse((sum / value.length).toStringAsFixed(2)),
-      //       nbrComment: nbrComment));
-
-      // seriesList.add(
-      //   new charts.Series<ChartReview, String>(
-      //     id: 'Nombre de notes',
-      //     domainFn: (ChartReview rvws, _) => rvws.salerName,
-      //     measureFn: (ChartReview rvws, _) => rvws.nbr!,
-      //     data: reviews,
-      //   ),
-      // );
-
-      // seriesList.add(
-      //   new charts.Series<ChartReview, String>(
-      //     seriesColor: charts.ColorUtil.fromDartColor(Colors.green),
-      //     id: 'Note moyenne',
-      //     domainFn: (ChartReview rvws, _) => rvws.salerName,
-      //     measureFn: (ChartReview rvws, _) => rvws.average!,
-      //     data: reviews,
-      //   ),
-      // );
-
-      // seriesList.add(
-      //   new charts.Series<ChartReview, String>(
-      //     seriesColor: charts.ColorUtil.fromDartColor(Colors.orange),
-      //     id: 'Nombre de commentaires',
-      //     domainFn: (ChartReview rvws, _) => rvws.salerName,
-      //     measureFn: (ChartReview rvws, _) => rvws.nbrComment!,
-      //     data: reviews,
-      //   ),
-      // );
 
       isLoading = false;
     });
@@ -160,12 +126,17 @@ class _ChartState extends State<Chart> {
     List<int> selectedSalersIds = [];
     selectedSalersIds = widget.selectedSalers.map((e) => e!.id!).toList();
 
-    int start = widget.range.startDate!.millisecondsSinceEpoch;
-    int end = widget.range.endDate!.millisecondsSinceEpoch +
-        Duration(hours: 23, minutes: 59, seconds: 59).inMilliseconds;
+    if (widget.range != null) {
+      int start = widget.range!.startDate!.millisecondsSinceEpoch;
+      int end = widget.range!.endDate!.millisecondsSinceEpoch +
+          Duration(hours: 23, minutes: 59, seconds: 59).inMilliseconds;
 
-    _salersReviews = await _databaseState.salerReviewDao
-        .findSalerReviewBySalerIdDateRange(selectedSalersIds, start, end);
+      _salersReviews = await _databaseState.salerReviewDao
+          .findSalerReviewBySalerIdDateRange(selectedSalersIds, start, end);
+    } else {
+      _salersReviews = await _databaseState.salerReviewDao
+          .findSalerReviewBySalerId(selectedSalersIds);
+    }
 
     _salersReviewsMap =
         groupBy(_salersReviews, (SalerReview review) => review.salerId);
