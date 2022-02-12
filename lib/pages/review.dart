@@ -52,6 +52,15 @@ class _ReviewPageState extends State<ReviewPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text('Veuillez noter le vendeur ici',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                  fontSize: 28,
+                                                  letterSpacing: 2,
+                                                  fontStyle: FontStyle.italic)),
+                  ),
                   Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +157,7 @@ class _ReviewPageState extends State<ReviewPage> {
                       ),
                     ],
                   ),
-                  Spacer(flex: 3),
+                  Spacer(flex: 2),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

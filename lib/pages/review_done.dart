@@ -16,14 +16,14 @@ class ReviewDone extends StatelessWidget {
             children: [
               Expanded(
                   child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30),
+                padding: const EdgeInsets.symmetric(vertical: 50),
                 child: Center(child: Image.asset("assets/diademe_logo.png")),
               )),
               Text(
                 "Merci pour votre collaboration",
                 style: TextStyle(fontSize: 50, fontStyle: FontStyle.italic),
               ),
-              SizedBox(height: 20)
+              SizedBox(height: 30)
             ],
           ),
         ),

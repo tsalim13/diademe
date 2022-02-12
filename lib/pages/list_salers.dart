@@ -4,6 +4,7 @@ import 'package:animation_wrappers/animation_wrappers.dart';
 import 'package:diademe/Bloc/Database/database_bloc.dart';
 import 'package:diademe/Bloc/Database/database_state.dart';
 import 'package:diademe/Models/Saler.dart';
+import 'package:diademe/pages/edit_saler.dart';
 import 'package:flutter/material.dart';
 import 'package:diademe/Locale/locales.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -168,7 +169,20 @@ class _ListSalersState extends State<ListSalersPage> {
                             DataCell(Row(
                               children: [
                                 IconButton(
-                                    onPressed: () {}, icon: Icon(Icons.edit, color: Colors.blue)),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditSaler(saler: _salers[i])));
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        _salers = await _databaseState.salerDao.findAllSalers();
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                    }, 
+                                    icon: Icon(Icons.edit, color: Colors.blue)),
                                 IconButton(
                                     onPressed: () {
                                       showDialog<void>(

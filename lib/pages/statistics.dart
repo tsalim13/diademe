@@ -79,7 +79,14 @@ class _StatisticsState extends State<Statistics> {
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2, bottom: 8),
+                        child: Text("Liste des vendeurs: ",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500)),
+                      ),
                       MultiSelectChipField<Saler?>(
                         showHeader: false,
                         height: 140,
@@ -164,6 +171,8 @@ class _StatisticsState extends State<Statistics> {
                                       alignment: Alignment.center,
                                       width: 80,
                                       child: Text(item.value!.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.fade,
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyText1,
@@ -174,11 +183,15 @@ class _StatisticsState extends State<Statistics> {
                           );
                         },
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15, bottom: 8),
+                        child: Text("Intervalle de temps: ",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500)),
+                      ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text("Intervalle de temps: ",
-                              style: TextStyle(fontSize: 20)),
                           SizedBox(width: 15),
                           ElevatedButton(
                               style: style,
@@ -192,7 +205,7 @@ class _StatisticsState extends State<Statistics> {
                                       DateFormat.yMMMd('fr_FR')
                                           .format(_range!.endDate!)
                                   : "Personnalisé")),
-                          SizedBox(width: 8),
+                          SizedBox(width: 3),
                           ElevatedButton(
                               style: style,
                               onPressed: () {
@@ -203,36 +216,65 @@ class _StatisticsState extends State<Statistics> {
                               child: Icon(Icons.delete_outline)),
                         ],
                       ),
-                      ElevatedButton(
-                          style: style,
-                          onPressed: () {
-                            if (_selectedSalers.isNotEmpty) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Chart(
-                                            selectedSalers: _selectedSalers,
-                                            range: _range,
-                                            isGlobal: true,
-                                          )));
-                            }
-                          },
-                          child: Text("Recherche globale")),
-                      ElevatedButton(
-                          style: style,
-                          onPressed: () {
-                            if (_selectedSalers.isNotEmpty) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Chart(
-                                            selectedSalers: _selectedSalers,
-                                            range: _range,
-                                            isGlobal: false,
-                                          )));
-                            }
-                          },
-                          child: Text("Recherche detaillé")),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15, bottom: 8),
+                        child: Text("Type de recherche: ",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500)),
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(width: 15),
+                          ElevatedButton(
+                              style: style,
+                              onPressed: () {
+                                if (_selectedSalers.isNotEmpty) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Chart(
+                                                selectedSalers: _selectedSalers,
+                                                range: _range,
+                                                isGlobal: true,
+                                              )));
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content: Text(
+                                            'Veuillez séléctionner un ou plusieurs vendeurs',
+                                            style: TextStyle(fontSize: 21))),
+                                  );
+                                }
+                              },
+                              child: Text("Recherche globale")),
+                          SizedBox(width: 20),
+                          ElevatedButton(
+                              style: style,
+                              onPressed: () {
+                                if (_selectedSalers.isNotEmpty) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Chart(
+                                                selectedSalers: _selectedSalers,
+                                                range: _range,
+                                                isGlobal: false,
+                                              )));
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content: Text(
+                                            'Veuillez séléctionner un ou plusieurs vendeurs',
+                                            style: TextStyle(fontSize: 21))),
+                                  );
+                                }
+                              },
+                              child: Text("Recherche detaillé")),
+                        ],
+                      ),
+                      SizedBox(height: 50,)
                     ],
                   ),
                 ),

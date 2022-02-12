@@ -12,12 +12,15 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class AddSaler extends StatefulWidget {
+class EditSaler extends StatefulWidget {
+  final Saler saler;
+
+  const EditSaler({Key? key, required this.saler}) : super(key: key);
   @override
-  _AddSalerState createState() => _AddSalerState();
+  _EditSalerState createState() => _EditSalerState();
 }
 
-class _AddSalerState extends State<AddSaler> {
+class _EditSalerState extends State<EditSaler> {
   late LoadedDatabaseState _databaseState;
 
   TextEditingController nameFieldController = TextEditingController();
@@ -34,20 +37,13 @@ class _AddSalerState extends State<AddSaler> {
   void initState() {
     _databaseState =
         BlocProvider.of<DatabaseBloc>(context).state as LoadedDatabaseState;
-    super.initState();
-    // SystemChrome.setPreferredOrientations([
-    //     DeviceOrientation.portraitUp,
-    //     DeviceOrientation.portraitDown,
-    // ]);
-  }
 
-  @override
-  dispose() {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.landscapeRight,
-    //   DeviceOrientation.landscapeLeft,
-    // ]);
-    super.dispose();
+    nameFieldController.text = widget.saler.name;
+    phoneFieldController.text = widget.saler.phone;
+    _birthday = widget.saler.birthday;
+    _startDay = widget.saler.startday;
+    _isActive = widget.saler.actif;
+    super.initState();
   }
 
   @override
@@ -58,7 +54,6 @@ class _AddSalerState extends State<AddSaler> {
         primary: Theme.of(context).primaryColor.withOpacity(0.7),
         onPrimary: Colors.black,
         fixedSize: Size(250, 250));
-    var locale = AppLocalizations.of(context)!;
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -69,7 +64,7 @@ class _AddSalerState extends State<AddSaler> {
               onPressed: () {
                 Navigator.pop(context);
               }),
-          title: Text('Ajouter un nouveau vendeur'),
+          title: Text('Modifier vendeur'),
           centerTitle: true,
         ),
         body: LayoutBuilder(
@@ -271,8 +266,10 @@ class _AddSalerState extends State<AddSaler> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(300),
                                     child: croppedImage == null
-                                        ? Image.asset(
-                                            'assets/default.png',
+                                        ? Image.file(
+                                            File(_databaseState.path +
+                                                "/" +
+                                                widget.saler.image),
                                             fit: BoxFit.fill,
                                           )
                                         : Image.file(
@@ -370,54 +367,51 @@ class _AddSalerState extends State<AddSaler> {
                               padding: EdgeInsets.symmetric(vertical: 12)),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              if (croppedImage == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      backgroundColor: Colors.orange,
-                                      content: Text(
-                                          'Veuillez séléctionner une photo',
-                                          style: TextStyle(fontSize: 21))),
-                                );
-                              } else {
-                                try {
+                              try {
+                                File? newImage = null;
+                                if (croppedImage != null) {
                                   String newImageName = DateTime.now()
                                           .millisecondsSinceEpoch
                                           .toString() +
                                       croppedImage!.path.split('/').last;
-                                  File newImage = croppedImage!.copySync(
+                                  newImage = croppedImage!.copySync(
                                       _databaseState.path + "/" + newImageName);
-                                  await _databaseState.salerDao.insertSaler(
-                                      Saler(
-                                          name: nameFieldController.text,
-                                          phone: phoneFieldController.text,
-                                          birthday: _birthday ?? '',
-                                          startday: _startDay ?? '',
-                                          actif: _isActive,
-                                          image:
-                                              newImage.path.split('/').last));
-                                  setState(() {
-                                    croppedImage = null;
-                                    nameFieldController.text = '';
-                                    phoneFieldController.text = '';
-                                    _birthday = null;
-                                    _startDay = null;
-                                    _isActive = true;
-                                  });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        backgroundColor: Colors.green,
-                                        content: Text(
-                                            'Vendeur ajouté avec succés',
-                                            style: TextStyle(fontSize: 21))),
-                                  );
-                                } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        backgroundColor: Colors.red,
-                                        content: Text('Erreur',
-                                            style: TextStyle(fontSize: 21))),
-                                  );
                                 }
+
+                                await _databaseState.salerDao.updateSaler(Saler(
+                                    id: widget.saler.id,
+                                    name: nameFieldController.text,
+                                    phone: phoneFieldController.text,
+                                    birthday: _birthday ?? '',
+                                    startday: _startDay ?? '',
+                                    actif: _isActive,
+                                    image: croppedImage != null
+                                        ? newImage!.path.split('/').last
+                                        : widget.saler.image));
+                                if (croppedImage != null) {
+                                  try {
+                                    File(_databaseState.path +
+                                            "/" +
+                                            widget.saler.image)
+                                        .delete();
+                                  } catch (e) {}
+                                }
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      backgroundColor: Colors.green,
+                                      content: Text(
+                                          'Vendeur modifier avec succés',
+                                          style: TextStyle(fontSize: 21))),
+                                );
+                                Navigator.pop(context);
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('Erreur',
+                                          style: TextStyle(fontSize: 21))),
+                                );
                               }
                             }
                           },

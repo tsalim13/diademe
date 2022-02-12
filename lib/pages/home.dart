@@ -32,11 +32,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
+    //double wdth = (_size.width - 30) / _salers.length;
+    //maxWidth = wdth < (_size.height - 130) ? wdth : (_size.height - 130);
     double wdth = (_size.width - 60) / _salers.length;
-    maxWidth = wdth < (_size.height - 120) ? wdth : (_size.height - 120);
+    maxWidth = wdth < (_size.height - 130) ? wdth + (30 / _salers.length) : (_size.height - 130);
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(top: 10, bottom: 15),
+        padding: EdgeInsets.only(top: 5, bottom: 15),
         child: BlocConsumer<DatabaseBloc, DatabaseState>(
           listener: (context, state) async {
             if (state is LoadedDatabaseState) {
@@ -77,17 +79,27 @@ class _HomePageState extends State<HomePage> {
                                                 fontWeight: FontWeight.bold,
                                                 fontFamily: "Edwardian",
                                                 color: Colors.black,
-                                                fontSize: 75)),
+                                                fontSize: 78)),
                                       ],
                                     ),
+                                    // Row(
+                                    //   mainAxisAlignment: MainAxisAlignment.end,
+                                    //   children: [
+                                    //     Text('Feedback',
+                                    //         style: TextStyle(
+                                    //             color: Theme.of(context)
+                                    //                 .primaryColor,
+                                    //             fontSize: 20)),
+                                    //   ],
+                                    // ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Text('Feedback',
+                                        Text('Aidez-nous à améliorer notre service',
                                             style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                fontSize: 20)),
+                                                fontSize: 20,
+                                                letterSpacing: 2,
+                                                fontStyle: FontStyle.italic)),
                                       ],
                                     )
                                   ],

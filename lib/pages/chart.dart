@@ -7,9 +7,12 @@ import 'package:diademe/Models/Saler.dart';
 import 'package:diademe/Models/SalerReview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import "package:collection/collection.dart";
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:expandable/expandable.dart';
 
 class Chart extends StatefulWidget {
   final List<Saler?> selectedSalers;
@@ -84,8 +87,11 @@ class _ChartState extends State<Chart> {
             e, DateUtils.dateOnly(DateTime.fromMillisecondsSinceEpoch(e.date))))
         .toList();
 
-    _salerReviewWithDateTimeMap = groupBy(salerReviewWithDateTime,
-        (SalerReviewWithDateTime review) => review.datetime);
+    // _salerReviewWithDateTimeMap = groupBy(salerReviewWithDateTime,
+    //     (SalerReviewWithDateTime review) => review.datetime);
+
+    // _salersReviewsMap =
+    //     groupBy(_salersReviews, (SalerReview review) => review.salerId);
 
     List<DateTimeChartReview> reviews = [];
 
@@ -214,25 +220,142 @@ class _ChartState extends State<Chart> {
       body: FadedSlideAnimation(
         isLoading
             ? Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: widget.isGlobal
-                    ? charts.BarChart(
-                        seriesList as List<charts.Series<dynamic, String>>,
-                        animate: true,
-                        barGroupingType: charts.BarGroupingType.grouped,
-                        behaviors: [new charts.SeriesLegend()],
-                      )
-                    : charts.TimeSeriesChart(
-                        seriesListDatetime
-                            as List<charts.Series<dynamic, DateTime>>,
-                        animate: true,
-                        // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-                        // should create the same type of [DateTime] as the data provided. If none
-                        // specified, the default creates local date time.
-                        dateTimeFactory: const charts.LocalDateTimeFactory(),
-                        behaviors: [new charts.SeriesLegend()],
-                      )),
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      widget.isGlobal
+                          ? Container(
+                              height: MediaQuery.of(context).size.height - 56,
+                              child: charts.BarChart(
+                                seriesList,
+                                animate: true,
+                                barGroupingType: charts.BarGroupingType.grouped,
+                                behaviors: [new charts.SeriesLegend()],
+                              ),
+                            )
+                          : Container(
+                              height: MediaQuery.of(context).size.height - 56,
+                              child: charts.TimeSeriesChart(
+                                seriesListDatetime,
+                                animate: true,
+                                // Optionally pass in a [DateTimeFactory] used by the chart. The factory
+                                // should create the same type of [DateTime] as the data provided. If none
+                                // specified, the default creates local date time.
+                                dateTimeFactory:
+                                    const charts.LocalDateTimeFactory(),
+                                behaviors: [new charts.SeriesLegend()],
+                              ),
+                            ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Divider(thickness: 2),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text("Commentaires: ",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        child: ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: _salers.length,
+                            separatorBuilder: (context, int index) {
+                              return Divider();
+                            },
+                            itemBuilder: (context, int index) {
+                              Saler s = _salers[index];
+                              List<SalerReview> rws = _salersReviews
+                                  .where((element) =>
+                                      element.salerId == s.id &&
+                                      element.comment.isNotEmpty)
+                                  .toList();
+                              return ExpandablePanel(
+                                header: Text(s.name,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400)),
+                                collapsed: Container(),
+                                expanded: Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 15, left: 15, bottom: 10),
+                                    child: ListView.separated(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: rws.length,
+                                        separatorBuilder: (context, int index) {
+                                          return Divider();
+                                        },
+                                        itemBuilder: (context, int i) {
+                                          return Row(
+                                            children: [
+                                              Container(
+                                                width: (MediaQuery.of(context).size.width - 55)*0.5,
+                                                child: Text(rws[i].comment)
+                                              ),
+                                              Spacer(),
+                                              RatingBar(
+                                                ignoreGestures: true,
+                                                initialRating:
+                                                    rws[i].mark.toDouble(),
+                                                minRating: 1,
+                                                direction: Axis.horizontal,
+                                                allowHalfRating: false,
+                                                itemCount: 5,
+                                                itemPadding:
+                                                    EdgeInsets.only(right: 1),
+                                                ratingWidget: RatingWidget(
+                                                  full: Stack(
+                                                    alignment: Alignment.center,
+                                                    children: [
+                                                      Icon(Icons.star_border,
+                                                          size: 250,
+                                                          color: Colors.amber),
+                                                      Icon(Icons.star,
+                                                          size: 120,
+                                                          color: Colors.amber),
+                                                    ],
+                                                  ),
+                                                  half: Icon(Icons.star_border,
+                                                      size: 90,
+                                                      color: Colors.amber),
+                                                  empty: Stack(
+                                                    alignment: Alignment.center,
+                                                    children: [
+                                                      Icon(Icons.star_border,
+                                                          size: 250,
+                                                          color:
+                                                              Colors.grey[350]),
+                                                      Icon(Icons.star,
+                                                          size: 120,
+                                                          color:
+                                                              Colors.grey[350]),
+                                                    ],
+                                                  ),
+                                                ),
+                                                itemSize: 30,
+                                                onRatingUpdate: (rating) {},
+                                              ),
+                                              Spacer(),
+                                              Text(DateFormat('dd/MM/yyyy HH:mm')
+                                                        .format(DateTime.fromMillisecondsSinceEpoch(rws[i].date)))
+                                            ],
+                                          );
+                                        })),
+                              );
+                            }),
+                      ),
+                      SizedBox(height: 80,)
+                    ],
+                  ),
+                ),
+              ),
         beginOffset: Offset(0.0, 0.3),
         endOffset: Offset(0, 0),
         slideCurve: Curves.linearToEaseOut,

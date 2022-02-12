@@ -5,15 +5,17 @@ class EntryField extends StatelessWidget {
   final String? initialValue;
   final bool? enabled;
   final int? maxLines;
+  final int? maxLength;
   final double? fontSize;
   final String? Function(String?)? validator;
   final TextEditingController? textFieldController;
   TextEditingController entryFieldController = TextEditingController();
-  EntryField(this.title, {this.initialValue, this.validator, this.enabled, this.maxLines, this.fontSize, this.textFieldController});
+  EntryField(this.title, {this.initialValue, this.validator, this.enabled, this.maxLines, this.maxLength, this.fontSize, this.textFieldController});
   @override
   Widget build(BuildContext context) {
     textFieldController == null ? entryFieldController.text = initialValue ?? '' : textFieldController!.text = textFieldController!.text;
     return TextFormField(
+      maxLength: maxLength,
       textInputAction: TextInputAction.done,
       controller: textFieldController ?? entryFieldController,
       validator: validator,
