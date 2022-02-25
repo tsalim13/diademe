@@ -19,16 +19,16 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       late SalerDao salerDao;
       late SalerReviewDao salerReviewDao;
 
-      database = await $FloorAppDatabase
-          .databaseBuilder('app_database.db')
-          .build();
+      Directory? externalDirectory =
+          await getExternalStorageDirectory();
+
+      database =
+          await $FloorAppDatabase.databaseBuilder(externalDirectory!.path + '/database/app_database.db').build();
 
       salerDao = database.salerDao;
-        salerReviewDao = database.salerReviewDao;
+      salerReviewDao = database.salerReviewDao;
 
-      Directory appDocumentsDirectory =
-          await getApplicationDocumentsDirectory();
-      path = appDocumentsDirectory.path + '/images';
+      path = externalDirectory.path + '/images';
 
       if (!await Directory(path).exists()) {
         await Directory(path).create(recursive: true);

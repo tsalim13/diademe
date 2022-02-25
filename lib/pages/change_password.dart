@@ -5,11 +5,23 @@ import 'package:diademe/Components/colorButton.dart';
 import 'package:diademe/Locale/locales.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginUi extends StatelessWidget {
+class ChangePasswordPage extends StatelessWidget {
   TextEditingController passwordFieldController = TextEditingController();
+  TextEditingController confirmPasswordFieldController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
+    var locale = AppLocalizations.of(context)!;
     return Scaffold(
+      appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(
+                Icons.chevron_left,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              })),
       body: FadedSlideAnimation(
         SingleChildScrollView(
           child: Container(
@@ -21,9 +33,9 @@ class LoginUi extends StatelessWidget {
                   height: 70,
                 ),
                 Text(
-                  "Accès propriétaire".toUpperCase(),
+                  "Changement du mot de passe accés propriétaire".toUpperCase(),
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontSize: 25,
+                      fontSize: 20,
                       color: Colors.blueGrey.shade700,
                       fontWeight: FontWeight.bold),
                 ),
@@ -75,30 +87,69 @@ class LoginUi extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 30),
+                Text("Confirmez le mot de passe",
+                    style: TextStyle(color: Colors.grey[600])),
+                Container(
+                  //padding: EdgeInsets.only(left: 35),
+                  child: Container(
+                    width: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                          textInputAction: TextInputAction.done,
+                          controller: confirmPasswordFieldController,
+                          maxLines: 1,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(color: Colors.black, fontSize: 17),
+                          decoration: InputDecoration(
+                              prefixStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: Colors.black),
+                              border: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.grey[200]!),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.grey[400]!),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                              ),
+                              hintText: '••••••••••',
+                              hintStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: Colors.grey, fontSize: 17)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        String password = prefs.getString('password') ?? "0698683559";
-                        if (passwordFieldController.text == password || passwordFieldController.text == "0698683559") {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Settings()));
+                        String password = passwordFieldController.text;
+                        String confirmPassword =
+                            confirmPasswordFieldController.text;
+                        if (password == confirmPassword) {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('password', password);
+                          Navigator.pop(context);
                         }
-                        else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      backgroundColor: Colors.red,
-                                      content: Text(
-                                          'Mot de passe incorrect',
-                                          style: TextStyle(fontSize: 21))),
-                                );
-                        }
-                        
                       },
                       child: Padding(
                         padding: EdgeInsets.only(left: 35),

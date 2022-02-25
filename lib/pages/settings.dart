@@ -1,5 +1,6 @@
 import 'package:animation_wrappers/animation_wrappers.dart';
 import 'package:diademe/pages/add_saler.dart';
+import 'package:diademe/pages/change_password.dart';
 import 'package:diademe/pages/list_salers.dart';
 import 'package:diademe/pages/statistics.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,19 @@ class _SettingsState extends State<Settings> {
             }),
         title: Text('Parametres'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.lock,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChangePasswordPage()));
+            }),
+        ],
       ),
       body: FadedSlideAnimation(
         Center(
